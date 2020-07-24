@@ -9,6 +9,12 @@ class BooksAdmin(admin.ModelAdmin):
     list_per_page = 20
 
 
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('get_full_name', 'email', 'is_admin')
+
+
+admin.site.register(models.User, UserAdmin)
+
 admin.site.register(models.Books, BooksAdmin)
 admin.site.register(models.Author)
 admin.site.register(models.Subject)
