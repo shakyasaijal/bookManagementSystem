@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'api',
     'rest_framework',
     'books',
+    'debug_toolbar'
 ]
 
 AUTH_USER_MODEL = 'books.User'
@@ -33,6 +34,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
 ROOT_URLCONF = 'bms.urls'
@@ -101,3 +103,9 @@ EMAIL_HOST_USER = credentials['sys_email']
 EMAIL_HOST_PASSWORD = credentials['sys_password']
 EMAIL_PORT = credentials['smtp_port']
 EMAIL_USE_SSL = credentials['EMAIL_USE_SSL']
+
+INTERNAL_IPS = [
+    # ...
+    '127.0.0.1',
+    # ...
+]

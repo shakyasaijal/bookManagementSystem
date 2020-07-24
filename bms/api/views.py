@@ -81,20 +81,41 @@ class Login(mixins.CreateModelMixin,
             return Response({"status": False, "data": {"message": "Invalid credentials"}}, status=400)
 
 
+class Books(mixins.CreateModelMixin,
+            mixins.ListModelMixin,
+            mixins.RetrieveModelMixin,
+            viewsets.GenericViewSet):
+    queryset = books_model.Books.objects.all()
+    serializer_class = serializers.BooksSerializer
+    permission_classes = [AllowAny, ]
 
-# class Books(mixins.CreateModelMixin,
-#              mixins.ListModelMixin,
-#              mixins.RetrieveModelMixin,
-#              viewsets.GenericViewSet):
-#     queryset = books_model.Books.objects.all()
-#     serializer_class = serializers.BooksSerializer
-#     permission_classes = [AllowAny, ]
+    def list(self, request):
+        all_books = books_model.Books.objects.all().order_by('?')
+        books = []
+        all_books = books_model.Books.objects.prefetch_related('author').all()
+        for book in all_books:
+            books.append({
+                'id': book.id,
+                'title': book.title,
+                'author': [{"name": i.fullName, "id": i.id} for i in book.author.all()],
+                'image': book.image.url
+            })
+        return Response({"status": True, "data": books}, status=200)
 
-#     def list(self, request):
-#         all_books = books_model.Books.objects.all().order_by('?')
-#         books = []
-#         for book in all_books:
-#             flag = False
-#         return Response(orders, status=200)
-
-   
+    def retrieve(self, request, pk):
+        try:
+            book = books_model.Books.objects.get(pk=pk)
+            data = {
+                "id": book.id,
+                "title": book.title,
+                "grade": book.grade,
+                "author": [{"name": i.fullName, "id": i.id} for i in book.author.all()],
+                "subject": book.subject.name,
+                "chapter": book.chapter,
+                "byUser": book.user.email,
+                "image": book.image.url
+            }
+            return Response({"status": True, "data": data}, status=200)
+        except (Exception, books_model.Books.DoesNotExist) as e:
+            print(e)
+            return Response({"status": False, "data": {"message": "Data not found"}}, status=401)
