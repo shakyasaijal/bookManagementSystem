@@ -1,6 +1,10 @@
 from django.db import models
+from django.dispatch import receiver
+import os
+from django.utils.safestring import mark_safe
 from helper import models as models_helper
-from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin, UserManager)
+from django.contrib.auth.models import (
+    AbstractBaseUser, PermissionsMixin, UserManager)
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils import timezone
 import jwt
@@ -37,7 +41,7 @@ class UserManager(BaseUserManager):
         user = self._create_user(email, password, True, True, **extra_fields)
         return user
 
-        
+
 class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
@@ -47,9 +51,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(('date joined'), auto_now_add=True)
     last_login = models.DateTimeField(null=True, blank=True)
-    
-    refresh_tokens = models.TextField(blank=True, null=True)
 
+    refresh_tokens = models.TextField(blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
@@ -94,7 +97,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Author(models.Model):
-    fullName = models.CharField(max_length=255, null=False, blank=False, unique=True)
+    fullName = models.CharField(
+        max_length=255, null=False, blank=False, unique=True)
     email = models.EmailField(null=False, blank=False, unique=True)
 
     def __str__(self):
@@ -106,7 +110,8 @@ class Author(models.Model):
 
 
 class Subject(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False, unique=True)
+    name = models.CharField(max_length=255, null=False,
+                            blank=False, unique=True)
 
     def __str__(self):
         return self.name
@@ -116,17 +121,83 @@ class Subject(models.Model):
         verbose_name_plural = "Subjects"
 
 
+def books_image_name_change(instance, filename):
+    upload_to = 'books'
+    ext = filename.split('.')[-1]
+    # get filename
+    file_extension = filename.split('.')[1]
+    _datetime = datetime.now()
+    datetime_str = _datetime.strftime("%Y-%m-%d-%H-%M-%S")
+    date_format = datetime_str.split('-')
+    date_join = ''.join(date_format)
+
+    filename = '{}.{}'.format(date_join, ext)
+    return os.path.join(upload_to, filename)
+
+
 class Books(models.Model):
     title = models.CharField(max_length=255, null=False, blank=False)
-    grade = models.IntegerField(choices=models_helper.grades_choice, null=False, blank=False, default=1)
-    author = models.ManyToManyField(Author, related_name="author_books", blank=False)
-    subject = models.ForeignKey(Subject, on_delete=models.PROTECT, null=False, blank=False)
-    chapter = models.CharField(max_length=255, null=False, blank=False, unique=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False)
+    grade = models.IntegerField(
+        choices=models_helper.grades_choice, null=False, blank=False, default=1)
+    author = models.ManyToManyField(
+        Author, related_name="author_books", blank=False)
+    subject = models.ForeignKey(
+        Subject, on_delete=models.PROTECT, null=False, blank=False)
+    chapter = models.CharField(
+        max_length=255, null=False, blank=False, unique=True)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=False, blank=False)
+    image = models.ImageField(
+        upload_to=books_image_name_change, null=False, blank=False)
 
     def __str__(self):
         return self.title
 
+    def image_tag(self):
+        try:
+            return mark_safe('<img src="{}" width="150" height="150" />'.format(self.image.url))
+        except Exception as e:
+            print(e)
+    image_tag.short_description = 'Image'
+
     class Meta:
         verbose_name = "Book"
         verbose_name_plural = "Books"
+
+
+@receiver(models.signals.post_delete, sender=Books)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """
+    Deletes file from filesystem
+    when corresponding `MediaFile` object is deleted.
+    """
+    try:
+        if sender.__name__ == 'Books':
+            if instance.image:
+                if os.path.isfile(instance.image.path):
+                    os.remove(instance.image.path)
+    except Exception as e:
+        print('Delete on change', e)
+        pass
+
+
+@receiver(models.signals.pre_save, sender=Books)
+def auto_delete_file_on_change(sender, instance, **kwargs):
+    """
+    Deletes old file from filesystem
+    when corresponding `MediaFile` object is updated
+    with new file.
+    """
+    old_file = ""
+    new_file = ""
+    try:
+        if sender.__name__ == "Books":
+            if sender.objects.get(pk=instance.pk).image:
+                old_file = sender.objects.get(pk=instance.pk).image
+                new_file = instance.image
+
+    except sender.DoesNotExist:
+        return False
+    if not old_file == new_file:
+        if os.path.isfile(old_file.path):
+            os.remove(old_file.path)

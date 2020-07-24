@@ -7,6 +7,7 @@ class BooksAdmin(admin.ModelAdmin):
     search_fields = ('title', 'grade', 'subject', 'chapter')
     list_filter = ('grade',)
     list_per_page = 20
+    readonly_fields = ['image_tag']
 
 
 class UserAdmin(admin.ModelAdmin):

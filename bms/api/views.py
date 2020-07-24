@@ -79,3 +79,22 @@ class Login(mixins.CreateModelMixin,
                 return Response({"status": False, "data": {"message": "Invalid credentials"}}, status=400)
         else:
             return Response({"status": False, "data": {"message": "Invalid credentials"}}, status=400)
+
+
+
+# class Books(mixins.CreateModelMixin,
+#              mixins.ListModelMixin,
+#              mixins.RetrieveModelMixin,
+#              viewsets.GenericViewSet):
+#     queryset = books_model.Books.objects.all()
+#     serializer_class = serializers.BooksSerializer
+#     permission_classes = [AllowAny, ]
+
+#     def list(self, request):
+#         all_books = books_model.Books.objects.all().order_by('?')
+#         books = []
+#         for book in all_books:
+#             flag = False
+#         return Response(orders, status=200)
+
+   
