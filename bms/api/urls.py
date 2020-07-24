@@ -5,6 +5,7 @@ from api import views as api_views
 
 router = routers.DefaultRouter()
 router.register("register", api_views.Register, "register")
+router.register("login", api_views.Login, "login"),
 
 
 urlpatterns = router.urls

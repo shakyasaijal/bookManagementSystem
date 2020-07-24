@@ -10,7 +10,7 @@ class BooksAdmin(admin.ModelAdmin):
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('get_full_name', 'email', 'is_admin')
+    list_display = ('get_full_name', 'email',)
 
 
 admin.site.register(models.User, UserAdmin)
