@@ -2,9 +2,9 @@
 
 ## Table of Contents
 
-- [Project Setup](#projectsetup)
-- [Backend Setup](#backendsetup)
-- [Frontend Setup](#frontendsetup)
+- [Project Setup](#project-setup)
+- [Backend Setup](#backend-setup)
+- [Frontend Setup](#frontend-setup)
 
 ## Project Setup
 
