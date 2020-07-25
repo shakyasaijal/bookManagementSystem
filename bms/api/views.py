@@ -5,10 +5,12 @@ from rest_framework import parsers
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, logout
 import jwt
+from django.template.loader import render_to_string
 
 from books import models as books_model
 from . import serializers
 from helper import controller
+from api.common import send_email
 
 
 class Register(mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -143,8 +145,20 @@ class Books(viewsets.ModelViewSet):
             if serializer.is_valid():
                 if email != book.user.email:
                     return Response({"status": False, "data": {"message": "You don't have authority to update this book."}}, status=401)
-                serializer.save()
-                return Response({"status": True, "data": serializer.data}, status=200)
+                message = render_to_string('api/update-email.html', {
+                    'byUser': book.user.get_full_name(),
+                    'title': book.title
+                })
+
+                # Get author email
+                author_email = [data.email for data in book.author.all()]
+
+                # Send email
+                if send_email.send_new_email(author_email, message, "Book has been updated."):
+                    serializer.save()
+                    return Response({"status": True, "data": serializer.data}, status=200)
+                else:
+                    return Response({"status": False, "data": {"message": "Sorry. Email could not be send."}}, status=401)
             else:
                 print(serializer.errors)
                 return Response({"status": False, "data": {"message": "Unable to update data."}})
@@ -169,7 +183,19 @@ class Books(viewsets.ModelViewSet):
                 # Add user to books model.
                 new_book.user = books_model.User.objects.get(email=email)
                 new_book.save()
-                return Response({"status": True, "data": "Book successfully created."}, status=200)
+                message = render_to_string('api/create-email.html', {
+                    'byUser': new_book.user.get_full_name(),
+                    'title': new_book.title
+                })
+
+                # Get author email
+                author_email = [data.email for data in new_book.author.all()]
+
+                if send_email.send_new_email(author_email, message, "Book has been created."):
+                    return Response({"status": True, "data": "Book successfully created."}, status=200)
+                else:
+                    new_book.delete()
+                    return Response({"status": False, "data": {"message": "Sorry. Email could not be send."}}, status=401)
             else:
                 print(serializer.errors)
                 return Response({"status": False, "data": {"message": "All fields are required.", "errors": serializer.errors}}, status=401)
@@ -190,7 +216,6 @@ class Books(viewsets.ModelViewSet):
 
         try:
             book = books_model.Books.objects.get(pk=pk)
-            print(book.user)
             if book.user.email != email:
                 return Response({"status": False, "data": {"message": "You don't have authority to delete this book."}}, status=401)
 
