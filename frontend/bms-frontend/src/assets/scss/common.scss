@@ -1,0 +1,189 @@
+@import "abstracts/variables";
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.verticle-align {
+  position: relative;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+.center {
+  margin: 0 auto;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.header {
+  width: 100%;
+  overflow: hidden;
+  height: 50px;
+  background: $background-color;
+  & .navbar {
+    display: flex;
+    flex-direction: row;
+    margin-left: 50px;
+    margin-right: 50px;
+    & .logo {
+      color: $theme-color;
+      font-weight: 600;
+      font-size: $heading;
+    }
+    & .navs {
+      text-align: end;
+      & a {
+        color: $contrast-color;
+        text-decoration: none;
+        height: 100%;
+        padding: 20px 10px;
+        &:hover {
+          background: $theme-color;
+        }
+      }
+    }
+    & > * {
+      width: 50%;
+    }
+  }
+}
+
+.app {
+  margin-right: 50px;
+  margin-left: 50px;
+  grid-row-gap: 4%;
+  display: grid;
+  & .row {
+    padding: 15px 0;
+  }
+  & .page-title {
+    font-size: $title;
+    color: $theme-color;
+    font-weight: 600;
+    letter-spacing: 0.1rem;
+    border-bottom: 2px solid;
+    line-height: 1.8rem;
+  }
+}
+
+.cards-container {
+  display: grid;
+  grid-template-columns: 19% 19% 19% 19% 19%;
+  grid-gap: 1%;
+  grid-row-gap: 5%;
+  & a {
+    text-decoration: none;
+    color: unset;
+  }
+  & .cards {
+    background: $background-color;
+    overflow: hidden;
+    border-radius: 0 0 14px 14px;
+    & .image-container {
+      overflow: hidden;
+      height: 200px;
+      background: #d6d6d6;
+      & img {
+        width: 100%;
+        height: 100%;
+        object-fit: scale-down;
+        &:hover {
+          transform: scale(1.1);
+          transition: 0.8s ease;
+        }
+      }
+    }
+    & .content {
+      padding: 10px 15px;
+      & .book-name {
+        color: $theme-color;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+.book-details {
+  & .container {
+    display: grid;
+    grid-template-columns: 20% 74%;
+    grid-gap: 6%;
+    & .left {
+      & .image-container {
+        height: 400px;
+        & img {
+          height: 100%;
+          object-fit: scale-down;
+        }
+      }
+      & .content{
+        padding: 10px 0;
+        color: $background-color;
+        font-weight: 600;
+      }
+    }
+    & .right{
+        & .book-name{
+            color: $theme-color;
+            font-weight: 600;
+            font-size: $page-header;
+            letter-spacing: 2px;
+        }
+        & .author{
+            text-decoration: underline;
+        }
+        & .description{
+            padding: 15px 0;
+            text-align: justify;
+        }
+        & .information{
+            display: flex;
+            border: 3px solid;
+            padding: 20px;
+            margin: 20px 0 0 0; 
+            flex-direction: row;
+            flex-wrap: wrap;
+            & .label{
+                color: $background-color;
+                font-weight: 600;
+                font-size: $sub-title;
+            }
+            & .value{
+                font-size: $title;
+                font-weight: 600;
+            }
+            & .info{
+                width: 25%;
+                &:not(:last-child){
+                    border-right: 1px solid;
+                }
+                &:not(:first-child){
+                    padding-left: 10px;
+                }
+            }
+        }
+    }
+  }
+}
+
+
+.footer {
+  display: none;
+  background: $background-color;
+  padding: 10px 0;
+  width: 100%;
+  .copy-right {
+    color: $contrast-color;
+    cursor: pointer;
+    &:hover {
+      color: $theme-color;
+    }
+  }
+}
+
+@import "base/responsive";

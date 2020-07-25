@@ -1,0 +1,108 @@
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  .app {
+    margin-right: 25px;
+    margin-left: 25px;
+  }
+  .cards-container {
+    display: grid;
+    grid-template-columns: 48% 48%;
+    grid-gap: 2%;
+    & .cards {
+      & .image-container {
+        height: 200px;
+        & img {
+          &:hover {
+            transform: scale(1.1);
+            transition: 0.8s ease;
+          }
+        }
+      }
+      & .content {
+        padding: 10px 15px;
+        & .book-name {
+          color: $theme-color;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+  .book-details {
+    & .container {
+      grid-template-columns: 100%;
+      grid-row-gap: 1%;
+      & .left {
+        text-align: center;
+        & .image-container {
+          height: 400px;
+          & img {
+            height: 100%;
+          }
+        }
+        & .content {
+          padding: 10px 0;
+        }
+      }
+      & .right {
+        & .book-name {
+          font-weight: 600;
+          font-size: $page-header;
+          letter-spacing: 2px;
+        }
+        & .description {
+          padding: 15px 0;
+        }
+        & .information {
+          border: 3px solid;
+          padding: 10px;
+          margin: 20px 0 0 0;
+          flex-direction: row;
+          & .label {
+            font-weight: 600;
+            font-size: $sub-title;
+          }
+          & .value {
+            font-size: $title;
+            font-weight: 600;
+          }
+          & .info {
+            width: 50%;
+            padding: 10px 0;
+            &:not(:last-child) {
+              border-right: 0;
+            }
+            &:not(:first-child) {
+              padding-left: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+    .cards-container {
+        display: grid;
+        grid-template-columns: 24% 24% 24% 24%;
+        grid-gap: 1.5%;
+        & .cards {
+          & .image-container {
+            height: 200px;
+            & img {
+              &:hover {
+                transform: scale(1.1);
+                transition: 0.8s ease;
+              }
+            }
+          }
+          & .content {
+            padding: 10px 15px;
+            & .book-name {
+              color: $theme-color;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+}

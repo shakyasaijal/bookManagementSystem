@@ -113,6 +113,8 @@ class Books(viewsets.ModelViewSet):
     def retrieve(self, request, pk):
         try:
             book = books_model.Books.objects.get(pk=pk)
+            book.views += 1
+            book.save()
             data = {
                 "id": book.id,
                 "title": book.title,
