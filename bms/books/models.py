@@ -51,7 +51,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(('date joined'), auto_now_add=True)
     last_login = models.DateTimeField(null=True, blank=True)
-
     refresh_tokens = models.TextField(blank=True, null=True)
 
     USERNAME_FIELD = 'email'
@@ -144,9 +143,9 @@ class Books(models.Model):
     subject = models.ForeignKey(
         Subject, on_delete=models.PROTECT, null=False, blank=False)
     chapter = models.CharField(
-        max_length=255, null=False, blank=False, unique=True)
+        max_length=255, null=False, blank=False)
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, null=False, blank=False)
+        User, on_delete=models.CASCADE, null=True, blank=True)
     image = models.ImageField(
         upload_to=books_image_name_change, null=False, blank=False)
 

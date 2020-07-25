@@ -1,11 +1,14 @@
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import parsers
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, logout
+import jwt
 
 from books import models as books_model
 from . import serializers
+from helper import controller
 
 
 class Register(mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -53,12 +56,18 @@ class Login(mixins.CreateModelMixin,
             email = request.data["email"]
             password = request.data["password"]
             try:
+                # Check if user exists
                 check = books_model.User.objects.get(email=email)
                 user = authenticate(
                     request, email=request.data["email"], password=request.data["password"])
-                # user = api_models.User.objects.get(email=email)
             except books_model.User.DoesNotExist:
                 return Response({"status": False, "data": {"message": "Invalid credentials."}}, status=401)
+
+            '''
+            # If refresh token exists append with ','
+            # OR
+            # Add new refresh token
+            '''
             if user:
                 token = user.refresh_token
                 if user.refresh_tokens:
@@ -81,18 +90,15 @@ class Login(mixins.CreateModelMixin,
             return Response({"status": False, "data": {"message": "Invalid credentials"}}, status=400)
 
 
-class Books(mixins.CreateModelMixin,
-            mixins.ListModelMixin,
-            mixins.RetrieveModelMixin,
-            viewsets.GenericViewSet):
+class Books(viewsets.ModelViewSet):
     queryset = books_model.Books.objects.all()
     serializer_class = serializers.BooksSerializer
     permission_classes = [AllowAny, ]
 
     def list(self, request):
+        # Fetch data randomly
         all_books = books_model.Books.objects.all().order_by('?')
         books = []
-        all_books = books_model.Books.objects.prefetch_related('author').all()
         for book in all_books:
             books.append({
                 'id': book.id,
@@ -112,7 +118,7 @@ class Books(mixins.CreateModelMixin,
                 "author": [{"name": i.fullName, "id": i.id} for i in book.author.all()],
                 "subject": book.subject.name,
                 "chapter": book.chapter,
-                "byUser": book.user.email,
+                "byUser": book.user.id,
                 "image": book.image.url
             }
             return Response({"status": True, "data": data}, status=200)
@@ -120,3 +126,76 @@ class Books(mixins.CreateModelMixin,
             print(e)
             return Response({"status": False, "data": {"message": "Data not found"}}, status=401)
 
+    def update(self, request, pk):
+        try:
+            """
+            # Get email from access token.
+            """
+            email = controller.get_email(request)
+        except Exception as e:
+            return Response({"status": False, "data": {"message": "Access Token required"}}, status=401)
+        
+        try:
+            book = books_model.Books.objects.get(pk=pk)
+            serializer = serializers.BooksSerializer(book, data=request.data)
+
+
+            if serializer.is_valid():
+                if email != book.user.email:
+                    return Response({"status": False, "data": {"message": "You don't have authority to update this book."}}, status=401)
+                serializer.save()
+                return Response({"status": True, "data": serializer.data}, status=200)
+            else:
+                print(serializer.errors)
+                return Response({"status": False, "data": {"message": "Unable to update data."}})
+        except (Exception, books_model.Books.DoesNotExist) as e:
+            print(e)
+            return Response({"status": False, "data": {"message": "Data not found."}}, status=401)
+
+    def create(self, request):
+        try:
+            """
+            # Get email from access token.
+            """
+            email = controller.get_email(request)
+        except Exception as e:
+            return Response({"status": False, "data": {"message": "Access Token required"}}, status=401)
+        
+        try:
+            serializer = serializers.CreateBooks(data=request.data)
+            if serializer.is_valid():
+                new_book = serializer.save()
+
+                # Add user to books model.
+                new_book.user = books_model.User.objects.get(email=email)
+                new_book.save()
+                return Response({"status": True, "data": "Book successfully created."}, status=200)
+            else:
+                print(serializer.errors)
+                return Response({"status": False, "data": {"message": "All fields are required.", "errors": serializer.errors}}, status=401)
+        except (Exception, books_model.User.DoesNotExist) as e:
+            print("Create book: ", e)
+            return Response({"status": False, "data": {"message": "Something went wrong."}}, status=400)
+
+
+    def destroy(self, request, pk):
+        try:
+            """
+            # Get email from access token.
+            """
+            email = controller.get_email(request)
+        except Exception as e:
+            return Response({"status": False, "data": {"message": "Access Token required"}}, status=401)
+        
+
+        try:
+            book = books_model.Books.objects.get(pk=pk)
+            print(book.user)
+            if book.user.email != email:
+                return Response({"status": False, "data": {"message": "You don't have authority to delete this book."}}, status=401)
+
+            book.delete()
+            return Response({"status": True, "data": {"message": "Book deleted"}}, status=200)
+        except (Exception, books_model.Books.DoesNotExist) as e:
+            print("Delete book: ", e)
+            return Response({"status": False, "data": {"message": "Something went wrong."}}, status=400)

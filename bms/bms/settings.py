@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'debug_toolbar'
 ]
 
+
 AUTH_USER_MODEL = 'books.User'
 
 
@@ -109,3 +110,6 @@ INTERNAL_IPS = [
     '127.0.0.1',
     # ...
 ]
+
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o755
+FILE_UPLOAD_PERMISSIONS = 0o644

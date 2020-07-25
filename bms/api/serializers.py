@@ -21,5 +21,29 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(required=True)
 
 
-class BooksSerializer(serializers.Serializer):
-    pass
+class AuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = books_model.Author
+        fields = '__all__'
+
+
+class BooksSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(required=False)
+    grade = serializers.IntegerField(required=False)
+    subject = serializers.RelatedField(
+        source='books_model.Subject', read_only=True)
+    chapter = serializers.CharField(required=False)
+    user = serializers.RelatedField(source='books_model.User', read_only=True)
+    image = serializers.ImageField(required=False)
+    author = AuthorSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = books_model.Books
+        fields = '__all__'
+
+
+class CreateBooks(serializers.ModelSerializer):
+    # user = UserRegisterSerializer(read_only=True)
+    class Meta:
+        fields = ('title', 'grade', 'subject', 'chapter', 'image', 'author',)
+        model = books_model.Books
