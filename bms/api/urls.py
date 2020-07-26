@@ -10,5 +10,9 @@ router.register("books", api_views.Books, "books"),
 router.register("logout", api_views.Logout, "logout")
 
 
+urlpatterns = [
+    path('popular-books', api_views.popularBooks, name="popularBooks")
+]
 
-urlpatterns = router.urls
+
+urlpatterns += router.urls

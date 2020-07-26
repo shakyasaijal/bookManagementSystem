@@ -13,6 +13,7 @@ export const getEndPoint = () => {
 };
 
 
+
 export const getImageBasePath = (fileName) => {
-    return getEndPoint() + fileName;
+    return process.env.REACT_APP_API_URL + fileName;
 };

@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, logout
 import jwt
 import yaml
 from django.template.loader import render_to_string
+from rest_framework.decorators import permission_classes, api_view
 
 from books import models as books_model
 from . import serializers
@@ -50,6 +51,7 @@ class Register(mixins.CreateModelMixin, viewsets.GenericViewSet):
                 return Response({"status": False, "data": {"message": "Sign up Failed."}}, status=401)
         except Exception as e:
             print(e)
+
 
 class Login(mixins.CreateModelMixin,
             viewsets.GenericViewSet):
@@ -104,13 +106,13 @@ class Books(viewsets.ModelViewSet):
 
     def list(self, request):
         # Fetch data randomly
-        all_books = books_model.Books.objects.all().order_by('?')
+        all_books = books_model.Books.objects.all().order_by('?')[:10]
         books = []
         for book in all_books:
             books.append({
                 'id': book.id,
                 'title': book.title,
-                'author': [{"name": i.fullName, "id": i.id} for i in book.author.all()],
+                'author': [i.fullName for i in book.author.all()],
                 'image': book.image.url
             })
         return Response({"status": True, "data": books}, status=200)
@@ -143,11 +145,10 @@ class Books(viewsets.ModelViewSet):
             email = controller.get_email(request)
         except Exception as e:
             return Response({"status": False, "data": {"message": "Access Token required"}}, status=401)
-        
+
         try:
             book = books_model.Books.objects.get(pk=pk)
             serializer = serializers.BooksSerializer(book, data=request.data)
-
 
             if serializer.is_valid():
                 if email != book.user.email:
@@ -181,7 +182,7 @@ class Books(viewsets.ModelViewSet):
             email = controller.get_email(request)
         except Exception as e:
             return Response({"status": False, "data": {"message": "Access Token required"}}, status=401)
-        
+
         try:
             serializer = serializers.CreateBooks(data=request.data)
             if serializer.is_valid():
@@ -210,7 +211,6 @@ class Books(viewsets.ModelViewSet):
             print("Create book: ", e)
             return Response({"status": False, "data": {"message": "Something went wrong."}}, status=400)
 
-
     def destroy(self, request, pk):
         try:
             """
@@ -219,7 +219,6 @@ class Books(viewsets.ModelViewSet):
             email = controller.get_email(request)
         except Exception as e:
             return Response({"status": False, "data": {"message": "Access Token required"}}, status=401)
-        
 
         try:
             book = books_model.Books.objects.get(pk=pk)
@@ -247,7 +246,7 @@ class Logout(mixins.CreateModelMixin,
         except (books_model.User.DoesNotExist, Exception) as e:
             print(e)
             return Response({"status": False, "data": {"message": "Invalid Token"}}, status=400)
-        
+
         try:
             serializer = serializers.Logout(data=request.data)
             if serializer.is_valid():
@@ -265,3 +264,24 @@ class Logout(mixins.CreateModelMixin,
             return Response({"status": False, "data": {"message": serializer.errors}}, status=400)
         except Exception as e:
             print(e)
+
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def popularBooks(request):
+    try:
+        all_books = books_model.Books.objects.order_by("-views")[:10]
+
+        response = []
+
+        for data in all_books:
+            response.append({
+                "id": data.id,
+                "title": data.title,
+                "image": data.image.url,
+                "author": [i.fullName for i in data.author.all()]
+            })
+        return Response({"status": True, "data": response}, status=200)
+    except Exception as e:
+        print(e)
