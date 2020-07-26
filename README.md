@@ -5,6 +5,7 @@
 - [Project Setup](#project-setup)
 - [Backend Setup](#backend-setup)
 - [Frontend Setup](#frontend-setup)
+- [Features Completed](#features-completed)
 
 ## Demo
 
@@ -21,6 +22,7 @@
 ```
 $ bash bash.sh
 ```
+
 Note: `bash bash.sh is to be runned before running the following steps.`
 
 ### Backend Setup
@@ -40,3 +42,11 @@ $ cd frontend
 $ yarn start
 ```
 
+### Features Completed
+
+- Sign In with redux and validation.
+- Sign Up with redux and validation.
+- Logout with redux.
+- Responsive Design for all pages.
+- Books CRUD Completed.
+- Register, Login, Logout backend completed.
