@@ -50,3 +50,7 @@ $ yarn start
 - Responsive Design for all pages.
 - Books CRUD Completed.
 - Register, Login, Logout backend completed.
+- Fetch Popular Books (Top viewed books)
+- Fetch Latest Books (10 random books)
+- Redirect to sign in page if unauthenticated user points to /add-book
+
