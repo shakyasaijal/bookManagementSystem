@@ -1,10 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { connect, useSelector, useDispatch } from 'react-redux';
+import { Link, Redirect } from 'react-router-dom';
 import PATHS from '../routes';
+import { logout } from '../actions/auth';
 
 
-const Header = () => {
-    const login = true;
+const Header = (props) => {
+    const dispatch = useDispatch();
+    const isAuth = useSelector(state => state.auth);
     return (
         <header className="header">
             <div className="navbar verticle-align">
@@ -13,7 +16,7 @@ const Header = () => {
                     <Link to={PATHS.HOME} className="nav">Home</Link>
                     <Link to={PATHS.SEARCH} className="nav">Search</Link>
                     {
-                        login ? <Link to={PATHS.ADD_BOOK} className="nav">Add Book</Link> : <>
+                        isAuth.isAuthenticated ? <><Link to={PATHS.ADD_BOOK} className="nav">Add Book</Link><span onClick={() => { dispatch(logout()); }} className="nav">Logout</span></> : <>
                             <Link to={PATHS.SIGN_IN} className="nav">Sign In</Link>
                             <Link to={PATHS.SIGN_UP} className="nav">Sign Up</Link>
                         </>
@@ -24,4 +27,9 @@ const Header = () => {
     );
 }
 
-export default Header;
+const mapStateToProps = state => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    error: state.auth.errorLOAD_ERROR
+});
+
+export default connect(mapStateToProps, {})(Header);

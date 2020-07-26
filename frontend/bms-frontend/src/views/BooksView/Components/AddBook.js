@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { connect, useSelector } from 'react-redux';
 import Creatable from 'react-select/creatable';
 import { addValidation } from './Validation';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import { Redirect } from 'react-router-dom';
 
 const animatedComponents = makeAnimated();
 
@@ -28,6 +30,13 @@ const AddBook = () => {
         description: ''
     });
 
+    const isAuth = useSelector(state => state.auth);
+    if (!isAuth.isAuthenticated) {
+        return <Redirect to='/sign-in' />;
+    }
+
+
+
     const handleSubmit = e => {
         setError({});
         e.preventDefault();
@@ -39,7 +48,7 @@ const AddBook = () => {
             }
             setError({ ...error, ...val });
         }
-        else{
+        else {
             setState(initialState);
         }
     }
@@ -52,10 +61,10 @@ const AddBook = () => {
         }
     }
     const handleSubject = e => {
-        if(e.__isNew__){
+        if (e.__isNew__) {
             console.log(e)
         }
-        else{
+        else {
             setState({ ...state, subject: e });
         }
 
@@ -66,16 +75,16 @@ const AddBook = () => {
 
     const handleAuthor = e => {
         setState({ ...state, author: e });
-        if('author' in error){
-            setError({...error, author: ''})
+        if ('author' in error) {
+            setError({ ...error, author: '' })
         }
     }
 
     const handleImageChange = e => {
-        if(e.target.files[0].name){
-            setState({...state, image: e.target.files[0]})
-            if('image' in error){
-                setError({...error, image: ''})
+        if (e.target.files[0].name) {
+            setState({ ...state, image: e.target.files[0] })
+            if ('image' in error) {
+                setError({ ...error, image: '' })
             }
         }
     }
@@ -175,4 +184,8 @@ const AddBook = () => {
     )
 }
 
-export default AddBook;
+const mapStateToProps = state => ({
+    isAuthenticated: state.auth.isAuthenticated
+});
+
+export default connect(mapStateToProps, {})(AddBook);

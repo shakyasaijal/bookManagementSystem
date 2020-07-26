@@ -53,6 +53,20 @@
   }
 }
 
+.success{
+  background: $background-color;
+}
+
+.invalid{
+  background: red;
+}
+
+.success, .invalid{
+  padding: 10px 15px;
+  color: #fff;
+  margin: 15px 0;
+}
+
 .app {
   margin-right: 50px;
   margin-left: 50px;

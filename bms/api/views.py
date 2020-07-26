@@ -5,12 +5,15 @@ from rest_framework import parsers
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, logout
 import jwt
+import yaml
 from django.template.loader import render_to_string
 
 from books import models as books_model
 from . import serializers
 from helper import controller
 from api.common import send_email
+
+credentials = yaml.load(open("credentials.yaml"), Loader=yaml.FullLoader)
 
 
 class Register(mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -19,32 +22,34 @@ class Register(mixins.CreateModelMixin, viewsets.GenericViewSet):
     permission_classes = [AllowAny, ]
 
     def create(self, request):
-        serializer = serializers.UserRegisterSerializer(data=request.data)
+        try:
+            serializer = serializers.UserRegisterSerializer(data=request.data)
 
-        if serializer.is_valid():
-            serializer.save()
-            try:
-                # Add refresh token
-                user = books_model.User.objects.get(
-                    email=request.data["email"])
-                refresh_token = user.refresh_token
-                user.refresh_tokens = refresh_token
-                user.save()
-            except (Exception, books_model.User.DoesNotExist) as e:
-                pass
+            if serializer.is_valid():
+                serializer.save()
+                try:
+                    # Add refresh token
+                    user = books_model.User.objects.get(
+                        email=request.data["email"])
+                    refresh_token = user.refresh_token
+                    user.refresh_tokens = refresh_token
+                    user.save()
+                except (Exception, books_model.User.DoesNotExist) as e:
+                    pass
 
-            # Response data
-            data = {
-                'id': user.id,
-                'email': user.email,
-                'fullName': user.get_full_name(),
-                "accessToken": user.access_token,
-                "refreshToken": refresh_token
-            }
-            return Response({"status": True, "data": data}, status=200)
-        else:
-            return Response({"status": False, "data": {"message": "Sign up Failed."}}, status=401)
-
+                # Response data
+                data = {
+                    'id': user.id,
+                    'email': user.email,
+                    'fullName': user.get_full_name(),
+                    "accessToken": user.access_token,
+                    "refreshToken": refresh_token
+                }
+                return Response({"status": True, "data": data}, status=200)
+            else:
+                return Response({"status": False, "data": {"message": "Sign up Failed."}}, status=401)
+        except Exception as e:
+            print(e)
 
 class Login(mixins.CreateModelMixin,
             viewsets.GenericViewSet):
@@ -63,7 +68,7 @@ class Login(mixins.CreateModelMixin,
                 user = authenticate(
                     request, email=request.data["email"], password=request.data["password"])
             except books_model.User.DoesNotExist:
-                return Response({"status": False, "data": {"message": "Invalid credentials."}}, status=401)
+                return Response({"status": False, "data": {"message": "Invalid credentials."}}, status=201)
 
             '''
             # If refresh token exists append with ','
@@ -226,3 +231,37 @@ class Books(viewsets.ModelViewSet):
         except (Exception, books_model.Books.DoesNotExist) as e:
             print("Delete book: ", e)
             return Response({"status": False, "data": {"message": "Something went wrong."}}, status=400)
+
+
+class Logout(mixins.CreateModelMixin,
+             viewsets.GenericViewSet):
+    serializer_class = serializers.Logout
+    permission_classes = [AllowAny, ]
+
+    def create(self, request):
+        try:
+            print(request.data)
+            decoded = jwt.decode(request.data['accessToken'], credentials["jwt_secret"], algorithms="HS256", options={
+                "verify_exp": False})
+            user = books_model.User.objects.get(email=decoded["email"])
+        except (books_model.User.DoesNotExist, Exception) as e:
+            print(e)
+            return Response({"status": False, "data": {"message": "Invalid Token"}}, status=400)
+        
+        try:
+            serializer = serializers.Logout(data=request.data)
+            if serializer.is_valid():
+                refresh_tokens = user.refresh_tokens.split(",")
+                if serializer.data.get("refreshToken") in refresh_tokens:
+                    refresh_tokens.remove(serializer.data.get("refreshToken"))
+                    if len(refresh_tokens) > 0:
+                        user.refresh_tokens = ",".join(refresh_tokens)
+                    else:
+                        user.refresh_tokens = None
+                    user.save()
+                    return Response({"status": True, "data": {"message": "Successfully logged out"}}, status=200)
+                return Response({"status": False, "data": {"message": "Invalid Refresh Token"}}, status=400)
+
+            return Response({"status": False, "data": {"message": serializer.errors}}, status=400)
+        except Exception as e:
+            print(e)

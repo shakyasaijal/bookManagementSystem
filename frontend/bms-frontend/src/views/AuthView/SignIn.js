@@ -1,13 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import { signIn } from './Components/Validation';
+import { login } from '../../actions/auth';
+import { Redirect } from 'react-router-dom';
 
-const SignIn = () => {
+
+const SignIn = props => {
     const initialState = {
         email: '',
         password: ''
     }
     const [state, setState] = useState(initialState);
     const [error, setError] = useState(initialState);
+
+
+
+    if (props.isAuthenticated) {
+        return <Redirect to='/' />;
+    }
 
     const handleChange = e => {
         const { name, value } = e.target;
@@ -27,13 +37,16 @@ const SignIn = () => {
             }
             setError({ ...error, ...val });
         } else {
-            // Submit
+            props.login(state.email, state.password);
             setState(initialState);
         }
     }
+
     return (
         <div className="row">
             <div className="signIn center">
+                {props.success && <div className="success">{props.success}</div>}
+                {props.error && <div className="invalid">{props.error}</div>}
                 <div className="page-title">Sign In</div>
                 <div className="signIn-container">
                     <form method="POST" onSubmit={e => handleSubmit(e)}>
@@ -57,4 +70,10 @@ const SignIn = () => {
     );
 }
 
-export default SignIn;
+const mapStateToProps = state => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    error: state.auth.error,
+    success: state.auth.success
+});
+
+export default connect(mapStateToProps, { login })(SignIn);

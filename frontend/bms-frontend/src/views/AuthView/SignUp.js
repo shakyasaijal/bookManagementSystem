@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import { signUp } from './Components/Validation';
+import { signUp as signUpUser } from '../../actions/auth';
+import { Redirect } from 'react-router-dom';
+import PATHS from '../../routes';
 
-const SignUp = () => {
+
+const SignUp = props => {
     const initialState = {
         email: '',
         password: '',
@@ -10,6 +15,10 @@ const SignUp = () => {
     }
     const [state, setState] = useState(initialState);
     const [error, setError] = useState(initialState);
+
+    if (props.success) {
+        return <Redirect to={PATHS.SIGN_IN} />;
+    }
 
     const handleChange = e => {
         const { name, value } = e.target;
@@ -30,6 +39,7 @@ const SignUp = () => {
             setError({ ...error, ...val });
         } else {
             // Submit
+            props.signUpUser(state);
             setState(initialState);
         }
     }
@@ -69,4 +79,10 @@ const SignUp = () => {
     );
 }
 
-export default SignUp;
+
+const mapStateToProps = state => ({
+    success: state.auth.success,
+    error: state.auth.error
+});
+
+export default connect(mapStateToProps, { signUpUser })(SignUp);

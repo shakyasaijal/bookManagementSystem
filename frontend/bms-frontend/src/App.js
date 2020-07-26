@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './assets/css/common.min.css';
 import PATHS from './routes';
+import { Provider } from 'react-redux';
+import store from './store';
+import { loadUser } from './actions/auth';
+
 
 import Header from './components/Header';
 import Home from './views/HomeView/Home';
@@ -25,22 +29,29 @@ const BookManagementRoute = (props) => {
 }
 
 function App() {
+  useEffect(()=>{
+    store.dispatch(loadUser());
+  }, []);
+  
   return (
-    <Router>
-      <Header />
-      <div className="app">
-        <Switch>
-          <BookManagementRoute exact path={PATHS.HOME} component={Home} />
-          <BookManagementRoute exact path={PATHS.BOOKS_DETAIL} component={BooksDetails} title="Details" />
-          <BookManagementRoute exact path={PATHS.SIGN_IN} component={SignIn} title="Sign In" />
-          <BookManagementRoute exact path={PATHS.SIGN_UP} component={SignUp} title="Sign Up" />
-          <BookManagementRoute exact path={PATHS.SEARCH} component={Search} title="Search" />
-          <BookManagementRoute exact path={PATHS.ADD_BOOK} component={AddBook} title="Add Book" />
-          <BookManagementRoute exact path={PATHS.NOT_FOUND} component={Home} title="Add Book" />
-        </Switch>
-      </div>
-      <Footer />
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <Header />
+        <div className="app">
+          <Switch>
+            <BookManagementRoute exact path={PATHS.HOME} component={Home} />
+            <BookManagementRoute exact path={PATHS.BOOKS_DETAIL} component={BooksDetails} title="Details" />
+            <BookManagementRoute exact path={PATHS.SIGN_IN} component={SignIn} title="Sign In" />
+            <BookManagementRoute exact path={PATHS.SIGN_UP} component={SignUp} title="Sign Up" />
+            <BookManagementRoute exact path={PATHS.SEARCH} component={Search} title="Search" />
+            <BookManagementRoute exact path={PATHS.ADD_BOOK} component={AddBook} title="Add Book" />
+            <BookManagementRoute exact path={PATHS.NOT_FOUND} component={Home} title="Add Book" />
+          </Switch>
+        </div>
+        <Footer />
+      </Router>
+    </Provider>
+
   );
 }
 

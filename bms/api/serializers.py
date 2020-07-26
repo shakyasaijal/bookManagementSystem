@@ -47,3 +47,8 @@ class CreateBooks(serializers.ModelSerializer):
     class Meta:
         fields = ('title', 'grade', 'subject', 'chapter', 'image', 'author',)
         model = books_model.Books
+
+
+class Logout(serializers.Serializer):
+    refreshToken = serializers.CharField(required=True)
+    accessToken = serializers.CharField(required=True)
