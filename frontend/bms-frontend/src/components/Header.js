@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import PATHS from '../routes';
+
 
 const Header = () => {
     return (
@@ -9,8 +11,8 @@ const Header = () => {
                 <div className="navs center">
                     <Link to='/' className="nav">Home</Link>
                     <Link to='/' className="nav">Search</Link>
-                    <Link to='/' className="nav">Sign In</Link>
-                    <Link to='/' className="nav">Sign Up</Link>
+                    <Link to={PATHS.SIGN_IN} className="nav">Sign In</Link>
+                    <Link to={PATHS.SIGN_UP} className="nav">Sign Up</Link>
                 </div>
             </div>
         </header>

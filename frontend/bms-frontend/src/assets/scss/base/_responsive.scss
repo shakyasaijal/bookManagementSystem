@@ -3,6 +3,12 @@
     margin-right: 25px;
     margin-left: 25px;
   }
+  .signIn {
+    width: 100%;
+    & .signIn-container {
+      margin-top: 20px;
+    }
+  }
   .cards-container {
     display: grid;
     grid-template-columns: 48% 48%;
@@ -82,27 +88,33 @@
 
 /* iPads (portrait and landscape) ----------- */
 @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
-    .cards-container {
-        display: grid;
-        grid-template-columns: 24% 24% 24% 24%;
-        grid-gap: 1.5%;
-        & .cards {
-          & .image-container {
-            height: 200px;
-            & img {
-              &:hover {
-                transform: scale(1.1);
-                transition: 0.8s ease;
-              }
-            }
-          }
-          & .content {
-            padding: 10px 15px;
-            & .book-name {
-              color: $theme-color;
-              font-weight: 600;
-            }
+  .signIn {
+    width: 60%;
+    & .signIn-container {
+      margin-top: 20px;
+    }
+  }
+  .cards-container {
+    display: grid;
+    grid-template-columns: 24% 24% 24% 24%;
+    grid-gap: 1.5%;
+    & .cards {
+      & .image-container {
+        height: 200px;
+        & img {
+          &:hover {
+            transform: scale(1.1);
+            transition: 0.8s ease;
           }
         }
       }
+      & .content {
+        padding: 10px 15px;
+        & .book-name {
+          color: $theme-color;
+          font-weight: 600;
+        }
+      }
+    }
+  }
 }
