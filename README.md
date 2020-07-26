@@ -6,6 +6,16 @@
 - [Backend Setup](#backend-setup)
 - [Frontend Setup](#frontend-setup)
 
+## Demo
+
+- [Backend](admin.onehousesolution.com/admin)
+- [Frontend](dev.onehousesolution.com)
+
+### Admin Credentials
+
+> Email: `admin@admin.com` <br/>
+> Password: `admin`
+
 ## Project Setup
 
 ```
