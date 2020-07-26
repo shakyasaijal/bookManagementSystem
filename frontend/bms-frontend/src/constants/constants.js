@@ -163,3 +163,123 @@ export const bookDetails = () => {
         }
     ]
 }
+
+
+export const searchData = () => {
+    return [
+        {
+            data: [
+                {
+                    id: 1,
+                    title: 'Great Gatsby',
+                    author: 'Saijal Shakya',
+                    image: 'https://d2wzqffx6hjwip.cloudfront.net/spree/images/attachments/000/037/551/product/9781922079558.jpg?1561505888'
+                },
+                {
+                    id: 1,
+                    title: 'Great Gatsby',
+                    author: 'Saijal Shakya',
+                    image: 'https://d2wzqffx6hjwip.cloudfront.net/spree/images/attachments/000/037/551/product/9781922079558.jpg?1561505888'
+                },
+                {
+                    id: 1,
+                    title: 'Great Gatsby',
+                    author: 'Saijal Shakya',
+                    image: 'https://d2wzqffx6hjwip.cloudfront.net/spree/images/attachments/000/037/551/product/9781922079558.jpg?1561505888'
+                }
+                , {
+                    id: 1,
+                    title: 'Great Gatsby',
+                    author: 'Saijal Shakya',
+                    image: 'https://d2wzqffx6hjwip.cloudfront.net/spree/images/attachments/000/037/551/product/9781922079558.jpg?1561505888'
+                },
+                {
+                    id: 1,
+                    title: 'Great Gatsby',
+                    author: 'Saijal Shakya',
+                    image: 'https://d2wzqffx6hjwip.cloudfront.net/spree/images/attachments/000/037/551/product/9781922079558.jpg?1561505888'
+                },
+                {
+                    id: 1,
+                    title: 'Great Gatsby',
+                    author: 'Saijal Shakya',
+                    image: 'https://d2wzqffx6hjwip.cloudfront.net/spree/images/attachments/000/037/551/product/9781922079558.jpg?1561505888'
+                },
+                {
+                    id: 1,
+                    title: 'Great Gatsby',
+                    author: 'Saijal Shakya',
+                    image: 'https://d2wzqffx6hjwip.cloudfront.net/spree/images/attachments/000/037/551/product/9781922079558.jpg?1561505888'
+                }
+                , {
+                    id: 1,
+                    title: 'Great Gatsby',
+                    author: 'Saijal Shakya',
+                    image: 'https://d2wzqffx6hjwip.cloudfront.net/spree/images/attachments/000/037/551/product/9781922079558.jpg?1561505888'
+                },
+                {
+                    id: 1,
+                    title: 'Great Gatsby',
+                    author: 'Saijal Shakya',
+                    image: 'https://d2wzqffx6hjwip.cloudfront.net/spree/images/attachments/000/037/551/product/9781922079558.jpg?1561505888'
+                },
+                {
+                    id: 1,
+                    title: 'Great Gatsby',
+                    author: 'Saijal Shakya',
+                    image: 'https://d2wzqffx6hjwip.cloudfront.net/spree/images/attachments/000/037/551/product/9781922079558.jpg?1561505888'
+                },
+                {
+                    id: 1,
+                    title: 'Great Gatsby',
+                    author: 'Saijal Shakya',
+                    image: 'https://d2wzqffx6hjwip.cloudfront.net/spree/images/attachments/000/037/551/product/9781922079558.jpg?1561505888'
+                }
+                , {
+                    id: 1,
+                    title: 'Great Gatsby',
+                    author: 'Saijal Shakya',
+                    image: 'https://d2wzqffx6hjwip.cloudfront.net/spree/images/attachments/000/037/551/product/9781922079558.jpg?1561505888'
+                }
+            ],
+            filter: [
+                {
+                    grade: [
+                        {
+                            id: 1,
+                            name: 'Grade one'
+                        },
+                        {
+                            id: 2,
+                            name: 'Grade Two'
+                        }
+                    ],
+                    subject: [
+                        {
+                            id: 1,
+                            name: 'Subject One'
+                        },
+                        {
+                            id: 2,
+                            name: 'Subject Two'
+                        },
+                        {
+                            id: 3,
+                            name: 'Subject Three'
+                        }
+                    ],
+                    chapter: [
+                        {
+                            id: 1,
+                            name: 'Chapter one'
+                        },
+                        {
+                            id: 2,
+                            name: 'Chapter Two'
+                        }
+                    ],
+                }
+            ]
+        }
+    ]
+}

@@ -221,6 +221,49 @@
   cursor: not-allowed !important;
 }
 
+.search{
+  & .search-container{
+    width: 60%;
+    & .form-group{
+      & .form-control{
+        padding: 10px;
+        font-size: $title;
+      }
+    }
+  }
+  & .result-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    & .filter{
+      width: 15%;
+    }
+    & .results{
+      width: 80%;
+      margin: 0 2%;
+    }
+  }
+  & .filter{
+    & .filter-group{
+      &:not(:first-child){
+        margin-top: 20px;
+      }
+    }
+    & .filter-title{
+      background: $background-color;
+      color:$white;
+      font-size: $sub-title;
+      font-weight: 600;
+      padding: 6px;
+    }
+    & .filter-content{
+      margin-top: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+  }
+}
+
 .footer {
   display: none;
   background: $background-color;

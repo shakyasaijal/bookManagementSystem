@@ -8,6 +8,7 @@ import Home from './views/HomeView/Home';
 import BooksDetails from './views/BooksView/BooksDetails';
 import SignIn from './views/AuthView/SignIn';
 import SignUp from './views/AuthView/SignUp';
+import Search from './views/SearchView/Search';
 import Footer from './components/Footer';
 
 
@@ -31,7 +32,8 @@ function App() {
           <BookManagementRoute exact path={PATHS.HOME} component={Home} />
           <BookManagementRoute exact path={PATHS.BOOKS_DETAIL} component={BooksDetails} title="Details" />
           <BookManagementRoute exact path={PATHS.SIGN_IN} component={SignIn} title="Sign In" />
-          <BookManagementRoute exact path={PATHS.SIGN_UP} component={SignUp} title="Sign In" />
+          <BookManagementRoute exact path={PATHS.SIGN_UP} component={SignUp} title="Sign Up" />
+          <BookManagementRoute exact path={PATHS.SEARCH} component={Search} title="Search" />
         </Switch>
       </div>
       <Footer />
