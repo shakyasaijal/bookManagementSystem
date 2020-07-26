@@ -8,8 +8,8 @@
 
 ## Demo
 
-- [Backend](admin.onehousesolution.com/admin)
-- [Frontend](dev.onehousesolution.com)
+- [Backend](http://admin.onehousesolution.com/admin)
+- [Frontend](http://dev.onehousesolution.com)
 
 ### Admin Credentials
 
