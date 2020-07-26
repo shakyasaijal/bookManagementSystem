@@ -171,35 +171,55 @@
   }
 }
 
-.signIn{
+.signIn {
   width: 30%;
   border: 1px solid #d2cdcd;
   padding: 20px 25px;
-  & .page-title{
+  & .page-title {
     color: $background-color;
     font-size: $page-header;
     border: 0;
   }
-  & .signIn-container{
+  & .signIn-container {
     margin-top: 20px;
   }
 }
 
-.form-group{
+.col-md{
+  display: grid;
+  grid-template-columns: 48% 48%;
+  grid-gap: 4%;
+  & .form-group{
+    margin-top: 0 !important;
+  }
   &:not(:first-child){
+    margin-top: 20px !important;
+  }
+}
+
+.add {
+  width: 80%;
+  border: 1px solid #d2cdcd;
+  padding: 20px 25px;
+  margin-top: 20px;
+}
+
+.form-group {
+  &:not(:first-child) {
     margin-top: 20px;
   }
-  & .label{
+  & .label {
     font-weight: 600;
     font-size: $sub-title;
   }
-  & .form-control{
+  & .form-control {
     border: 1px solid #afafaf;
     padding: 5px;
     width: 100%;
     margin-top: 5px;
+    background: none;
   }
-  & .submit{
+  & .submit {
     padding: 10px;
     border: 0;
     outline: none;
@@ -209,54 +229,54 @@
     cursor: pointer;
     background: $background-color;
   }
-  .error{
+  .error {
     color: red;
     font-size: $sub-title;
     padding-top: 5px;
   }
 }
 
-.disabled{
+.disabled {
   background: grey !important;
   cursor: not-allowed !important;
 }
 
-.search{
-  & .search-container{
+.search {
+  & .search-container {
     width: 60%;
-    & .form-group{
-      & .form-control{
+    & .form-group {
+      & .form-control {
         padding: 10px;
         font-size: $title;
       }
     }
   }
-  & .result-container{
+  & .result-container {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    & .filter{
+    & .filter {
       width: 15%;
     }
-    & .results{
+    & .results {
       width: 80%;
       margin: 0 2%;
     }
   }
-  & .filter{
-    & .filter-group{
-      &:not(:first-child){
+  & .filter {
+    & .filter-group {
+      &:not(:first-child) {
         margin-top: 20px;
       }
     }
-    & .filter-title{
+    & .filter-title {
       background: $background-color;
-      color:$white;
+      color: $white;
       font-size: $sub-title;
       font-weight: 600;
       padding: 6px;
     }
-    & .filter-content{
+    & .filter-content {
       margin-top: 10px;
       max-height: 200px;
       overflow-y: auto;
