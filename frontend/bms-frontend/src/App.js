@@ -6,7 +6,6 @@ import { Provider } from 'react-redux';
 import store from './store';
 import { loadUser } from './actions/auth';
 
-
 import Header from './components/Header';
 import Home from './views/HomeView/Home';
 import BooksDetails from './views/BooksView/BooksDetails';
@@ -15,7 +14,7 @@ import SignUp from './views/AuthView/SignUp';
 import Search from './views/SearchView/Search';
 import AddBook from './views/BooksView/Components/AddBook';
 import Footer from './components/Footer';
-
+import { clearNotification } from './actions/notification';
 
 const DEFAULT_TITLE = 'Book Management System';
 
@@ -29,10 +28,10 @@ const BookManagementRoute = (props) => {
 }
 
 function App() {
-  useEffect(()=>{
+  useEffect(() => {
     store.dispatch(loadUser());
   }, []);
-  
+
   return (
     <Provider store={store}>
       <Router>

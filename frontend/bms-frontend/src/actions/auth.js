@@ -1,9 +1,8 @@
 import axios from 'axios';
 
 import {
-    USER_LOADED,
     USER_LOADING,
-    AUTH_ERROR,
+    CLEAR_NOTIFICATION_STARTER,
     LOGIN_SUCCESS,
     LOGIN_FAIL,
     LOGOUT_SUCCESS,
@@ -68,12 +67,11 @@ export const login = (email, password) => async (dispatch, getState) => {
         else {
             dispatch({
                 type: LOGIN_FAIL,
-                payload: res.data.data
+                payload: res.data.data.message
             })
         }
     } catch (e) {
-        console.log(e, "Login Actions")
-        dispatch({ type: LOGIN_FAIL, payload: "Something went wrong." });
+        dispatch({ type: LOGIN_FAIL, payload: "Connection Problem." });
     }
 }
 
@@ -118,9 +116,8 @@ export const logout = () => async (dispatch, getState) => {
 };
 
 
-export const signUp = (data) => async(dispatch, getState) => {
+export const signUp = (data) => async (dispatch, getState) => {
     const url = getState().getEndPoint;
-    console.log(data)
     const body = data;
 
     try {
@@ -134,10 +131,14 @@ export const signUp = (data) => async(dispatch, getState) => {
         else {
             dispatch({
                 type: SIGN_UP_FAILED,
-                payload: res.data.data
+                payload: res.data.data.message
             })
         }
     } catch (e) {
         dispatch({ type: SIGN_UP_FAILED, payload: "Something went wrong." });
     }
+}
+
+export const clearNotificationStarter = () => async (dispatch, getState) => {
+    dispatch({ type: CLEAR_NOTIFICATION_STARTER })
 }

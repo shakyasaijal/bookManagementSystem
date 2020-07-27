@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { signUp } from './Components/Validation';
-import { signUp as signUpUser } from '../../actions/auth';
+import { signUp as signUpUser, clearNotificationStarter } from '../../actions/auth';
+import { loadNotification } from '../../actions/notification';
 import { Redirect } from 'react-router-dom';
 import PATHS from '../../routes';
 
@@ -13,11 +14,23 @@ const SignUp = props => {
         first_name: '',
         last_name: ''
     }
+
+    useEffect(() => {
+        props.loadNotification(props.notification, props.notificationType);
+    }, [props.notification]);
+
+    useEffect(() => {
+        if (props.notification) {
+            props.clearNotificationStarter();
+        }
+    }, []);
+
+
     const [state, setState] = useState(initialState);
     const [error, setError] = useState(initialState);
 
-    if (props.success) {
-        return <Redirect to={PATHS.SIGN_IN} />;
+    if (props.isAuthenticated) {
+        return <Redirect to={PATHS.HOME} />;
     }
 
     const handleChange = e => {
@@ -43,9 +56,12 @@ const SignUp = props => {
             setState(initialState);
         }
     }
+
+
     return (
         <div className="row">
             <div className="signIn center">
+                {props.flash && <div className={props.notificationType ? "success" : "invalid"}>{props.flash}</div>}
                 <div className="page-title">Sign Up</div>
                 <div className="signIn-container">
                     <form method="POST" onSubmit={e => handleSubmit(e)}>
@@ -81,8 +97,11 @@ const SignUp = props => {
 
 
 const mapStateToProps = state => ({
-    success: state.auth.success,
-    error: state.auth.error
+    notification: state.auth.notification,
+    notificationType: state.auth.notificationType,
+    flash: state.notification.notification,
+    type: state.notification.notificationType,
+    isAuthenticated: state.auth.isAuthenticated
 });
 
-export default connect(mapStateToProps, { signUpUser })(SignUp);
+export default connect(mapStateToProps, { signUpUser, loadNotification, clearNotificationStarter })(SignUp);

@@ -1,4 +1,4 @@
-import { USER_LOADING, SIGN_UP_SUCCESS, SIGN_UP_FAILED, USER_LOADED, LOAD_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, AUTH_ERROR, LOGOUT_SUCCESS, LOGOUT_FAIL } from '../actions/types';
+import { USER_LOADING, CLEAR_NOTIFICATION_STARTER,SIGN_UP_SUCCESS, SIGN_UP_FAILED, USER_LOADED, LOGIN_SUCCESS, LOGIN_FAIL, AUTH_ERROR, LOGOUT_SUCCESS, LOGOUT_FAIL } from '../actions/types';
 
 
 
@@ -8,8 +8,8 @@ const initialState = {
     isAuthenticated: null,
     isLoading: false,
     user_id: localStorage.getItem('user_id'),
-    error: '',
-    success: ''
+    notification: '',
+    notificationType: true //Success else false
 };
 
 export default function (state = initialState, action) {
@@ -20,15 +20,11 @@ export default function (state = initialState, action) {
                     ...state,
                     isLoading: true,
                     isAuthenticated: true,
-                    success: '',
-                    error: ''
                 };
             } else {
                 return {
                     ...state,
                     isLoading: true,
-                    success: '',
-                    error: ''
                 };
             }
         case USER_LOADED:
@@ -36,8 +32,6 @@ export default function (state = initialState, action) {
                 ...state,
                 isAuthenticated: true,
                 isLoading: false,
-                success: '',
-                error: ''
             };
         case LOGIN_SUCCESS:
             localStorage.setItem('user_id', action.payload.data.id);
@@ -50,10 +44,16 @@ export default function (state = initialState, action) {
                 isLoading: false,
                 accessToken: action.payload.data.accessToken,
                 refreshToken: action.payload.data.refreshToken,
-                success: '',
-                error: ''
+                notification: 'Login Success.',
+                notificationType: true
             };
         case LOGIN_FAIL:
+            return {
+                ...state,
+                isAuthenticated: false,
+                notification: action.payload,
+                notificationType: false
+            }
         case AUTH_ERROR:
         case LOGOUT_SUCCESS:
             localStorage.removeItem('accessToken');
@@ -65,27 +65,32 @@ export default function (state = initialState, action) {
                 user_id: null,
                 isAuthenticated: false,
                 isLoading: false,
-                error: action.payload.message,
-                success: ''
+                notification: '',
+                notificationType: false
             };
         case LOGOUT_FAIL:
             return {
                 ...state,
-                error: action.payload,
-                success: ''
+                notification: action.payload,
+                notificationType: false
             }
-        case LOAD_ERROR:
         case SIGN_UP_FAILED:
-            return {
+                return {
                 ...state,
-                error: action.payload,
-                success: ''
+                notification: action.payload,
+                notificationType: false
             }
         case SIGN_UP_SUCCESS:
             return {
                 ...state,
-                success: 'Your are successfully signed up.',
-                error: ''
+                notification: 'Your are successfully signed up.',
+                notificationType: true
+            }
+        case CLEAR_NOTIFICATION_STARTER:
+            return {
+                ...state,
+                notification: '',
+                notificationType: ''
             }
         default:
             return state;

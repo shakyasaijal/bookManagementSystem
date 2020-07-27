@@ -4,8 +4,8 @@ import { POPULAR_BOOKS_FETCH_SUCCESS, POPULAR_BOOKS_FETCH_FAILED, BOOKS_FETCH_SU
 
 const initialState = {
     books: '',
-    error: '',
-    success: '',
+    notification: '',
+    notificationType: '',
     getBooks: ''
 };
 
@@ -15,27 +15,23 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 books: action.payload,
-                error: '',
-                success: ''
             }
         case POPULAR_BOOKS_FETCH_FAILED:
             return {
                 ...state,
-                error: action.payload,
-                success: ''
+                notification: action.payload,
+                notificationType: false
             }
         case BOOKS_FETCH_SUCCESS:
             return {
                 ...state,
                 getBooks: action.payload,
-                error: '',
-                success: ''
             }
         case BOOKS_FETCH_FAILED:
             return {
                 ...state,
-                error: action.payload,
-                success: ''
+                notification: action.payload,
+                notificationType: false
             }
         default:
             return state;

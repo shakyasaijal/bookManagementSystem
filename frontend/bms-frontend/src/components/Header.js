@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import PATHS from '../routes';
 import { logout } from '../actions/auth';
+import { clearNotification } from '../actions/notification';
 
 
 const Header = (props) => {
@@ -32,4 +33,4 @@ const mapStateToProps = state => ({
     error: state.auth.errorLOAD_ERROR
 });
 
-export default connect(mapStateToProps, {})(Header);
+export default connect(mapStateToProps, {clearNotification})(Header);
