@@ -53,4 +53,14 @@ $ yarn start
 - Fetch Popular Books (Top viewed books)
 - Fetch Latest Books (10 random books)
 - Redirect to sign in page if unauthenticated user points to /add-book
+- Books Detail api call
+- Add books api
+- Mobile Navigation
+- Error display
+- State managed
 
+### Remaining Feature
+
+- Edit and Delete books
+- Force logout user after refresh token expires
+- Secretly logging in user when access token expired.
