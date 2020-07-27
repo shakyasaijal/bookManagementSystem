@@ -53,15 +53,16 @@
   }
 }
 
-.success{
+.success {
   background: $background-color;
 }
 
-.invalid{
+.invalid {
   background: red;
 }
 
-.success, .invalid{
+.success,
+.invalid {
   padding: 10px 15px;
   color: #fff;
   margin: 15px 0;
@@ -131,6 +132,7 @@
       & .image-container {
         height: 400px;
         & img {
+          width: 100%;
           height: 100%;
           object-fit: scale-down;
         }
@@ -199,14 +201,14 @@
   }
 }
 
-.col-md{
+.col-md {
   display: grid;
   grid-template-columns: 48% 48%;
   grid-gap: 4%;
-  & .form-group{
+  & .form-group {
     margin-top: 0 !important;
   }
-  &:not(:first-child){
+  &:not(:first-child) {
     margin-top: 20px !important;
   }
 }
@@ -298,11 +300,30 @@
   }
 }
 
-.footer {
+.mobile-nav {
+  position: fixed;
+  bottom: 0px;
+  background: $background-color;
   display: none;
+  min-height: 9vh;
+  max-height: 9vh;
+  width: 100%;
+  padding: 20px 0;
+  & .option {
+    width: 25%;
+    & a {
+      color: $contrast-color;
+      text-decoration: none;
+    }
+  }
+}
+
+.footer {
   background: $background-color;
   padding: 10px 0;
   width: 100%;
+  position: relative;
+  bottom: -9vh;
   .copy-right {
     color: $contrast-color;
     cursor: pointer;

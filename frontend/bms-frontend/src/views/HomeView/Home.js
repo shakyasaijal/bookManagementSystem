@@ -7,10 +7,17 @@ import { connect } from 'react-redux';
 
 
 const Home = props => {
+    console.log(props.notification)
+
     React.useEffect(() => {
-        props.clearNotificationStarter();
-        props.clearNotification();
-    }, []);
+        if (props.notification) {
+            if (props.notification != "Data not found") {
+                props.clearNotificationStarter();
+                props.clearNotification();
+            }
+        }
+    }, [props]);
+
     return (
         <>
             {props.flash && <div className={props.type ? "success" : "invalid"}>{props.flash}</div>}

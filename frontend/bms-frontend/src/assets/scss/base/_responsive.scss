@@ -1,13 +1,24 @@
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  .mobile-nav{
+    display: flex;
+  }
+  .navs{
+    display: none;
+  }
   .app {
     margin-right: 25px;
     margin-left: 25px;
+    margin-bottom: 40vh;
   }
   .signIn {
     width: 100%;
     & .signIn-container {
       margin-top: 20px;
     }
+  }
+  .footer{
+    position: relative;
+    bottom: 9vh;
   }
   .cards-container {
     display: grid;

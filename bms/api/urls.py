@@ -11,7 +11,8 @@ router.register("logout", api_views.Logout, "logout")
 
 
 urlpatterns = [
-    path('popular-books', api_views.popularBooks, name="popularBooks")
+    path('popular-books', api_views.popularBooks, name="popularBooks"),
+    path('data-to-add-book', api_views.data_to_add_book, name="data-to-add-book")
 ]
 
 

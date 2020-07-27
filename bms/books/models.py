@@ -149,6 +149,7 @@ class Books(models.Model):
         User, on_delete=models.CASCADE, null=True, blank=True)
     image = models.ImageField(
         upload_to=books_image_name_change, null=False, blank=False)
+    description = models.TextField(null=False, blank=False, default='')
 
     def __str__(self):
         return self.title

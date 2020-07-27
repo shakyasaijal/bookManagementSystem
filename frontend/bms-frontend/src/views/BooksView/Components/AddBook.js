@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import Creatable from 'react-select/creatable';
 import { addValidation } from './Validation';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { Redirect } from 'react-router-dom';
+import { getImpData, addBook } from '../../../actions/books';
+import { loadNotification } from '../../../actions/notification';
 
 const animatedComponents = makeAnimated();
 
 
-const AddBook = () => {
+const AddBook = props => {
     const initialState = {
         title: '',
         grade: '',
@@ -30,12 +32,29 @@ const AddBook = () => {
         description: ''
     });
 
-    const isAuth = useSelector(state => state.auth);
-    if (!isAuth.isAuthenticated) {
+    let subject = [];
+    let authors = [];
+
+
+    React.useEffect(() => {
+        props.getImpData();
+    }, []);
+    React.useEffect(() => {
+        props.loadNotification(props.notification, props.notificationType);
+    }, [props.notification])
+
+    const subjectDropDown = props.subject.map(k => (
+        subject.push(k)
+    ));
+
+    const authorDropDown = props.author.map(k => (
+        authors.push(k)
+    ));
+
+
+    if (!props.isAuthenticated) {
         return <Redirect to='/sign-in' />;
     }
-
-
 
     const handleSubmit = e => {
         setError({});
@@ -49,6 +68,7 @@ const AddBook = () => {
             setError({ ...error, ...val });
         }
         else {
+            props.addBook(state);
             setState(initialState);
         }
     }
@@ -88,29 +108,13 @@ const AddBook = () => {
             }
         }
     }
-
-    const subject = [
-        { value: 1, label: 'Subject One' },
-        { value: 2, label: 'Subject Two' },
-        { value: 3, label: 'Subject Three' },
-        { value: 4, label: 'Subject Four' },
-        { value: 5, label: 'Subject Five' }
-    ]
-
-    const authors = [
-        { value: 1, label: 'Author One' },
-        { value: 2, label: 'Author Two' },
-        { value: 3, label: 'Author Three' },
-        { value: 4, label: 'Author Four' },
-        { value: 5, label: 'Author Five' }
-    ]
-
     return (
         <div className="row">
             <div className="center">
+                {props.flash && <div className={props.type ? "success" : "invalid"}>{props.flash}</div>}
                 <div className="page-title">Add Book</div>
                 <div className="add center signIn-container">
-                    <form method="POST" onSubmit={e => handleSubmit(e)}>
+                    <form method="POST" onSubmit={e => handleSubmit(e)} enctype="multipart/form-data">
                         <div className="col-md">
                             <div className="form-group">
                                 <div className="label">Title</div>
@@ -185,7 +189,13 @@ const AddBook = () => {
 }
 
 const mapStateToProps = state => ({
-    isAuthenticated: state.auth.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated,
+    subject: state.books.subject,
+    author: state.books.author,
+    notification: state.books.notification,
+    notificationType: state.books.notificationType,
+    flash: state.notification.notification,
+    type: state.notification.type
 });
 
-export default connect(mapStateToProps, {})(AddBook);
+export default connect(mapStateToProps, { getImpData, addBook, loadNotification })(AddBook);

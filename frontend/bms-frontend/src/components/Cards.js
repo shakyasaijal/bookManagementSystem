@@ -5,8 +5,6 @@ import { getImageBasePath } from '../config/config';
 const Cards = props => {
     const data = props.data.data;
 
-    console.log(data)
-
     return (
         <div className="row">
             <div className="cards-container">
@@ -21,7 +19,7 @@ const Cards = props => {
                                     {card.title}
                                 </div>
                                 <div className="author text-center">
-                                    - {card.author}
+                                    
                                 </div>
                             </div>
                         </Link>

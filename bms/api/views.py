@@ -126,11 +126,13 @@ class Books(viewsets.ModelViewSet):
                 "id": book.id,
                 "title": book.title,
                 "grade": book.grade,
-                "author": [{"name": i.fullName, "id": i.id} for i in book.author.all()],
+                "author": [i.fullName for i in book.author.all()],
                 "subject": book.subject.name,
                 "chapter": book.chapter,
-                "byUser": book.user.id,
-                "image": book.image.url
+                "postedBy": book.user.get_full_name(),
+                "image": book.image.url,
+                "views": book.views,
+                "description": book.description
             }
             return Response({"status": True, "data": data}, status=200)
         except (Exception, books_model.Books.DoesNotExist) as e:
@@ -184,29 +186,31 @@ class Books(viewsets.ModelViewSet):
             return Response({"status": False, "data": {"message": "Access Token required"}}, status=401)
 
         try:
-            serializer = serializers.CreateBooks(data=request.data)
-            if serializer.is_valid():
-                new_book = serializer.save()
+            author = eval(request.data['author'])
+            subject = eval(request.data['subject'])
 
-                # Add user to books model.
-                new_book.user = books_model.User.objects.get(email=email)
-                new_book.save()
-                message = render_to_string('api/create-email.html', {
-                    'byUser': new_book.user.get_full_name(),
-                    'title': new_book.title
-                })
+            new_book = books_model.Books.objects.create(title=request.data['title'], subject=books_model.Subject.objects.get(id=subject['value']), grade=request.data['grade'], chapter=request.data['chapter'],
+                                                        image=request.FILES['image'], description=request.data['description'])
 
-                # Get author email
-                author_email = [data.email for data in new_book.author.all()]
+            # Add user to books model.
+            new_book.user = books_model.User.objects.get(email=email)
+            for data in author:
+                new_book.author.add(books_model.Author.objects.get(id=data['value']))
 
-                if send_email.send_new_email(author_email, message, "Book has been created."):
-                    return Response({"status": True, "data": "Book successfully created."}, status=200)
-                else:
-                    new_book.delete()
-                    return Response({"status": False, "data": {"message": "Sorry. Email could not be send."}}, status=401)
+            new_book.save()
+            message = render_to_string('api/create-email.html', {
+                'byUser': new_book.user.get_full_name(),
+                'title': new_book.title
+            })
+
+            # Get author email
+            author_email = [data.email for data in new_book.author.all()]
+
+            if send_email.send_new_email(author_email, message, "Book has been created."):
+                return Response({"status": True, "data": "Book successfully created."}, status=200)
             else:
-                print(serializer.errors)
-                return Response({"status": False, "data": {"message": "All fields are required.", "errors": serializer.errors}}, status=401)
+                new_book.delete()
+                return Response({"status": False, "data": {"message": "Sorry. Email could not be send."}}, status=201)
         except (Exception, books_model.User.DoesNotExist) as e:
             print("Create book: ", e)
             return Response({"status": False, "data": {"message": "Something went wrong."}}, status=400)
@@ -279,9 +283,41 @@ def popularBooks(request):
             response.append({
                 "id": data.id,
                 "title": data.title,
-                "image": data.image.url,
-                "author": [i.fullName for i in data.author.all()]
+                "author": [i.fullName for i in data.author.all()],
+                "image": data.image.url
             })
         return Response({"status": True, "data": response}, status=200)
     except Exception as e:
         print(e)
+        return Response({"status": False, "data": {"message": "Something went wrong."}}, status=400)
+
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def data_to_add_book(request):
+    try:
+        all_subject = books_model.Subject.objects.all()
+        all_author = books_model.Author.objects.all()
+        subject = []
+        author = []
+        for data in all_subject:
+            subject.append({
+                "value": data.id,
+                "label": data.name
+            })
+
+        for data in all_author:
+            author.append({
+                "value": data.id,
+                "label": data.fullName
+            })
+
+        data = {
+            "allSubjects": subject,
+            "allAuthor": author
+        }
+
+        return Response({"status": True, "data": data}, status=200)
+    except Exception as e:
+        return Response({"status": False, "data": {"message": "Something went wrong."}})

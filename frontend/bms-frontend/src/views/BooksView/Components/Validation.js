@@ -10,8 +10,10 @@ export const addValidation = data => {
                 console.log(error)
             }
         }
-        else if (value.length < 1) {
-            error.push({ "error": key, "errorValue": `${capitalize(key)} is required.` })
+        if(key !== 'author' && key !== "subject"){
+            if(value.length < 1){
+                error.push({ "error": key, "errorValue": `${capitalize(key)} is required.` })
+            }
         }
     }
     return error;

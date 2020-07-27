@@ -44,8 +44,10 @@ class BooksSerializer(serializers.ModelSerializer):
 
 class CreateBooks(serializers.ModelSerializer):
     # user = UserRegisterSerializer(read_only=True)
+    author = AuthorSerializer(read_only=True)
+    image = serializers.ImageField(required=True)
     class Meta:
-        fields = ('title', 'grade', 'subject', 'chapter', 'image', 'author',)
+        fields = ('title', 'grade', 'chapter', 'author', 'image')
         model = books_model.Books
 
 

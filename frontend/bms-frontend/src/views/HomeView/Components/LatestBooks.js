@@ -12,6 +12,7 @@ const LatestBooks = props => {
         props.fetchSomeBooks();
     }, []);
 
+ 
     return (
         <section className="row">
             <div className="page-title">Latest Books</div>
