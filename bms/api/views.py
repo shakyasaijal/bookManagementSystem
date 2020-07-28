@@ -15,7 +15,7 @@ from helper import controller
 from api.common import send_email, tags
 from django.db.models import Q
 from helper import models as models_helper
-
+from api.common import controller as search_controller
 
 credentials = yaml.load(open("credentials.yaml"), Loader=yaml.FullLoader)
 
@@ -338,8 +338,33 @@ class Search(mixins.CreateModelMixin,
     permission_classes = [AllowAny, ]
 
     def create(self, request):
+        subjectFilter = []
+        chapterFilter = []
+        gradeFilter = []
+        try:
+            subjectFilter = request.data['filters']['subjects']
+            if not subjectFilter:
+                subjectFilter = search_controller.get_unique_subjects()
+        except Exception as e:
+            subjectFilter = search_controller.get_unique_subjects()
+
+        try:
+            chapterFilter = request.data['filters']['chapters']
+            if not chapterFilter:
+                chapterFilter = search_controller.get_unique_chapters()
+        except Exception as e:
+            chapterFilter = search_controller.get_unique_chapters()
+
+        try:
+            gradeFilter = request.data['filters']['grades']
+            if not gradeFilter:
+                gradeFilter = search_controller.get_unique_grades()
+        except Exception as e:
+            gradeFilter = search_controller.get_unique_grades()
+
         books = books_model.Books.objects.filter(
-            Q(tags__tag__icontains=request.data['search'])).distinct()
+            Q(tags__tag__icontains=request.data['search']) & Q(subject__id__in=subjectFilter) & Q(chapter__in=chapterFilter) & Q(grade__in=gradeFilter)).distinct()
+
         data = []
         chapters = []
         subjects = []
@@ -366,3 +391,14 @@ class Search(mixins.CreateModelMixin,
             'grades': grades
         }
         return Response({'status': True, 'data': response}, status=200)
+
+
+
+class Filter(mixins.CreateModelMixin,
+             viewsets.GenericViewSet):
+    serializer_class = serializers.FilterSerializer
+    permission_classes = [AllowAny]
+
+    def create(self, request):
+        if 'grade' in request.data:
+            books = books_model.Books.objects.filter()

@@ -86,11 +86,19 @@
   }
 }
 
+.clear{
+  background: $background-color;
+  color: $white;
+  padding: 5px 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
 .cards-container {
   display: grid;
   grid-template-columns: 19% 19% 19% 19% 19%;
   grid-gap: 1%;
-  grid-row-gap: 5%;
+  grid-row-gap: 1%;
   & a {
     text-decoration: none;
     color: unset;

@@ -28,6 +28,7 @@ const SearchResult = props => {
                             </Link>
                         ): <>Loading...</>
                     }
+                    
                 </div>
             </div>
         </div>

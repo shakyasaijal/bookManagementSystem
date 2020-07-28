@@ -16,7 +16,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 class SearchSerializer(serializers.Serializer):
     search = serializers.CharField()
 
-    
+
 class LoginSerializer(serializers.Serializer):
     """
     Serializer for login endpoint.
@@ -50,6 +50,7 @@ class CreateBooks(serializers.ModelSerializer):
     # user = UserRegisterSerializer(read_only=True)
     author = AuthorSerializer(read_only=True)
     image = serializers.ImageField(required=True)
+
     class Meta:
         fields = ('title', 'grade', 'chapter', 'author', 'image')
         model = books_model.Books
@@ -58,3 +59,9 @@ class CreateBooks(serializers.ModelSerializer):
 class Logout(serializers.Serializer):
     refreshToken = serializers.CharField(required=True)
     accessToken = serializers.CharField(required=True)
+
+
+class FilterSerializer(serializers.Serializer):
+    grade = serializers.IntegerField(required=False)
+    subject = serializers.RelatedField(source='books_model.Subject', read_only=True)
+    chapter = serializers.CharField(required=False, allow_blank=True)

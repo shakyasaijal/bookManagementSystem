@@ -163,25 +163,29 @@ export const addBook = state => async (dispatch, getState) => {
 }
 
 
-export const searchBooks = data => async(dispatch, getState) => {
+export const searchBooks = (searchFor, grades, subjects, chapters) => async (dispatch, getState) => {
     const url = getState().getEndPoint;
 
     const body = JSON.stringify();
 
-    try{
-        const res = await axios.post(`${url}/search/`, { "search": data });
-        if(res.data.status){
+    try {
+        const res = await axios.post(`${url}/search/`, { "search": searchFor, "filters": { "grades": grades, "subjects": subjects, "chapters": chapters } });
+        if (res.data.status) {
             dispatch({
                 type: SEARCH_SUCCESS,
                 payload: res.data
             })
         }
     }
-    catch(e){
+    catch (e) {
         dispatch({
             type: SEARCH_FAILED,
             payload: "Connection Problem."
         })
     }
 
+}
+
+export const clearFilter = () => async(dispatch, getState) => {
+    dispatch({  })
 }
