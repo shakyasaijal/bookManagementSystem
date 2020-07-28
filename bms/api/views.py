@@ -365,6 +365,7 @@ class Search(mixins.CreateModelMixin,
         books = books_model.Books.objects.filter(
             Q(tags__tag__icontains=request.data['search']) & Q(subject__id__in=subjectFilter) & Q(chapter__in=chapterFilter) & Q(grade__in=gradeFilter)).distinct()
 
+
         data = []
         chapters = []
         subjects = []
