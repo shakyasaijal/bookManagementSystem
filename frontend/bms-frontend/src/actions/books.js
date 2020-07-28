@@ -15,7 +15,9 @@ import {
     DELETE_FAILED,
     DELETE_SUCCESS,
     EDIT_BOOK_FAILED,
-    EDIT_BOOK_SUCCESS
+    EDIT_BOOK_SUCCESS,
+    START_LOADING,
+    STOP_LOADING
 } from './types';
 
 
@@ -53,6 +55,7 @@ export const popularBooks = () => async (dispatch, getState) => {
 // Get latest books
 export const getBooks = () => async (dispatch, getState) => {
     const url = getState().getEndPoint;
+    dispatch({ type: START_LOADING })
 
     // Headers
     const config = {
@@ -62,7 +65,9 @@ export const getBooks = () => async (dispatch, getState) => {
     }
 
     try {
-        const res = await axios.get(`${url}/books/`, config)
+        const res = await axios.get(`${url}/books/`, config);
+        dispatch({ type: STOP_LOADING })
+
         if (res.data.status) {
             dispatch({
                 type: BOOKS_FETCH_SUCCESS,
@@ -82,13 +87,17 @@ export const getBooks = () => async (dispatch, getState) => {
 
 export const getBooksById = id => async (dispatch, getState) => {
     const url = getState().getEndPoint;
+    dispatch({ type: START_LOADING })
+
     const config = {
         headers: {
             'Content-Type': 'application/json'
         }
     }
     try {
-        const res = await axios.get(`${url}/books/${id}`, config)
+        const res = await axios.get(`${url}/books/${id}`, config);
+        dispatch({ type: STOP_LOADING })
+
         if (res.data.status) {
             dispatch({
                 type: BOOK_FETCH_BY_ID_SUCCESS,
@@ -108,8 +117,12 @@ export const getBooksById = id => async (dispatch, getState) => {
 
 export const getImpData = () => async (dispatch, getState) => {
     const url = getState().getEndPoint;
+    dispatch({ type: START_LOADING })
+
     try {
-        const res = await axios.get(`${url}/data-to-add-book`)
+        const res = await axios.get(`${url}/data-to-add-book`);
+        dispatch({ type: STOP_LOADING })
+
         if (res.data.status) {
             dispatch({
                 type: GET_IMP_DATA_SUCCESS,
@@ -124,6 +137,7 @@ export const getImpData = () => async (dispatch, getState) => {
 
 export const addBook = state => async (dispatch, getState) => {
     const url = getState().getEndPoint;
+    dispatch({ type: START_LOADING })
 
     // Get token from state
     const access = getState().auth.accessToken;
@@ -145,6 +159,7 @@ export const addBook = state => async (dispatch, getState) => {
 
     try {
         const res = await axios.post(`${url}/books/`, data, config);
+        dispatch({ type: STOP_LOADING })
         if (res.data.status) {
             dispatch({
                 type: ADD_BOOK_SUCCESS,
@@ -168,17 +183,19 @@ export const addBook = state => async (dispatch, getState) => {
 
 export const searchBooks = (searchFor, grades, subjects, chapters) => async (dispatch, getState) => {
     const url = getState().getEndPoint;
+    dispatch({ type: START_LOADING })
 
     const body = JSON.stringify();
 
     try {
         const res = await axios.post(`${url}/search/`, { "search": searchFor, "filters": { "grades": grades, "subjects": subjects, "chapters": chapters } });
+        dispatch({ type: STOP_LOADING })
         if (res.data.status) {
-            dispatch({
-                type: SEARCH_SUCCESS,
-                payload: res.data
-            })
-        }
+                dispatch({
+                    type: SEARCH_SUCCESS,
+                    payload: res.data
+                })
+            }
     }
     catch (e) {
         dispatch({
@@ -193,6 +210,7 @@ export const searchBooks = (searchFor, grades, subjects, chapters) => async (dis
 export const deleteBook = (id) => async (dispatch, getState) => {
     const url = getState().getEndPoint;
     const access = getState().auth.accessToken;
+    dispatch({ type: START_LOADING })
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -202,6 +220,8 @@ export const deleteBook = (id) => async (dispatch, getState) => {
 
     try {
         const res = await axios.delete(`${url}/books/${id}`, config);
+        dispatch({ type: STOP_LOADING })
+        
         if (res.data.status) {
             dispatch({
                 type: DELETE_SUCCESS,
@@ -228,6 +248,9 @@ export const deleteBook = (id) => async (dispatch, getState) => {
 export const editBook = state => async (dispatch, getState) => {
     const url = getState().getEndPoint;
     const access = getState().auth.accessToken;
+    dispatch({ type: START_LOADING })
+
+
 
     const config = {
         headers: {
@@ -243,13 +266,15 @@ export const editBook = state => async (dispatch, getState) => {
     data.append("description", state.description)
     data.append("subject", JSON.stringify(state.subject))
     data.append("chapter", state.chapter)
-        
+
     if (state.image) {
         data.append("image", state.image)
     }
 
     try {
         const res = await axios.put(`${url}/books/${state.id}/`, data, config);
+        dispatch({ type: STOP_LOADING })
+        
         if (res.data.status) {
             dispatch({
                 type: EDIT_BOOK_SUCCESS,

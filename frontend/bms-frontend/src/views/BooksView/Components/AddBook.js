@@ -7,7 +7,6 @@ import makeAnimated from 'react-select/animated';
 import { Redirect } from 'react-router-dom';
 import { getImpData, addBook } from '../../../actions/books';
 import { loadNotification, clearNotification } from '../../../actions/notification';
-
 const animatedComponents = makeAnimated();
 
 
@@ -41,8 +40,8 @@ const AddBook = props => {
         props.loadNotification(props.notification, props.notificationType);
     }, [props.notification]);
 
-    React.useEffect(()=>{
-        if(props.flash){
+    React.useEffect(() => {
+        if (props.flash) {
             setState(initialState);
         }
     }, [props.flash])

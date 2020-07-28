@@ -5,7 +5,6 @@ import { loadNotification, clearNotification } from '../../actions/notification'
 import { clearNotificationStarter } from '../../actions/auth';
 import { connect } from 'react-redux';
 
-
 const Home = props => {
     React.useEffect(() => {
         if (props.notification) {

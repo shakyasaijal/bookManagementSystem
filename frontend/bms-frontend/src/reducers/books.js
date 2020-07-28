@@ -1,4 +1,4 @@
-import { POPULAR_BOOKS_FETCH_SUCCESS, EDIT_BOOK_SUCCESS, EDIT_BOOK_FAILED, DELETE_FAILED, DELETE_SUCCESS, SEARCH_SUCCESS, SEARCH_FAILED, ADD_BOOK_FAILED, ADD_BOOK_SUCCESS, GET_IMP_DATA_SUCCESS, BOOK_FETCH_BY_ID_SUCCESS, POPULAR_BOOKS_FETCH_FAILED, BOOKS_FETCH_SUCCESS, BOOKS_FETCH_FAILED } from '../actions/types';
+import { START_LOADING, STOP_LOADING, POPULAR_BOOKS_FETCH_SUCCESS, EDIT_BOOK_SUCCESS, EDIT_BOOK_FAILED, DELETE_FAILED, DELETE_SUCCESS, SEARCH_SUCCESS, SEARCH_FAILED, ADD_BOOK_FAILED, ADD_BOOK_SUCCESS, GET_IMP_DATA_SUCCESS, BOOK_FETCH_BY_ID_SUCCESS, POPULAR_BOOKS_FETCH_FAILED, BOOKS_FETCH_SUCCESS, BOOKS_FETCH_FAILED } from '../actions/types';
 
 
 
@@ -13,7 +13,8 @@ const initialState = {
     searchData: null,
     allGrades: null,
     allSubjects: null,
-    allChapters: null
+    allChapters: null,
+    loading: false
 };
 
 export default function (state = initialState, action) {
@@ -34,7 +35,9 @@ export default function (state = initialState, action) {
                 ...state,
                 getBooks: action.payload,
                 notification: '',
-                notificationType: true
+                notificationType: true,
+                loading: false
+
             }
         case BOOKS_FETCH_FAILED:
             return {
@@ -47,19 +50,23 @@ export default function (state = initialState, action) {
                 ...state,
                 bookById: action.payload,
                 notification: '',
-                notificationType: true
+                notificationType: true,
+                loading: false
             }
         case GET_IMP_DATA_SUCCESS:
             return {
                 ...state,
                 subject: action.payload.data.allSubjects,
-                author: action.payload.data.allAuthor
+                author: action.payload.data.allAuthor,
+                loading: false
             }
         case ADD_BOOK_SUCCESS:
             return {
                 ...state,
                 notification: action.payload,
-                notificationType: true
+                notificationType: true,
+                loading: false
+
             }
         case ADD_BOOK_FAILED:
             return {
@@ -92,19 +99,34 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 notification: action.payload,
-                notificationType: true
+                notificationType: true,
+                loading: false
             }
         case EDIT_BOOK_SUCCESS:
             return {
                 ...state,
                 notification: "Book successfully updated.",
-                notificationType: true
+                notificationType: true,
+                loading: false
+
             }
         case EDIT_BOOK_FAILED:
             return {
                 ...state,
                 notification: action.payload,
-                notificationType: false
+                notificationType: false,
+                loading: false
+
+            }
+        case START_LOADING:
+            return {
+                ...state,
+                loading: true
+            }
+        case STOP_LOADING:
+            return {
+                ...state,
+                loading: false
             }
         default:
             return state;

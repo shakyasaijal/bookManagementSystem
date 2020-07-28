@@ -15,6 +15,7 @@ import Search from './views/SearchView/Search';
 import AddBook from './views/BooksView/Components/AddBook';
 import Footer from './components/Footer';
 import EditBook from './views/BooksView/Components/EditBook';
+import Loader from './components/Loader';
 
 const DEFAULT_TITLE = 'Book Management System';
 
@@ -36,6 +37,7 @@ function App() {
     <Provider store={store}>
       <Router>
         <Header />
+        <Loader />
         <div className="app">
           <Switch>
             <BookManagementRoute exact path={PATHS.HOME} component={Home} />

@@ -8,7 +8,9 @@ import {
     LOGOUT_SUCCESS,
     LOGOUT_FAIL,
     SIGN_UP_SUCCESS,
-    SIGN_UP_FAILED
+    SIGN_UP_FAILED,
+    START_LOADING,
+    STOP_LOADING
 } from './types';
 
 export const loadUser = () => async (dispatch, getState) => {
@@ -45,6 +47,7 @@ export const loadUser = () => async (dispatch, getState) => {
 // Login User
 export const login = (email, password) => async (dispatch, getState) => {
     const url = getState().getEndPoint;
+    dispatch({ type: START_LOADING })
 
     // Headers
     const config = {
@@ -57,7 +60,9 @@ export const login = (email, password) => async (dispatch, getState) => {
     const body = JSON.stringify({ email, password })
 
     try {
-        const res = await axios.post(`${url}/login/`, body, config)
+        const res = await axios.post(`${url}/login/`, body, config);
+        dispatch({ type: STOP_LOADING })
+
         if (res.data.status) {
             dispatch({
                 type: LOGIN_SUCCESS,
@@ -118,10 +123,13 @@ export const logout = () => async (dispatch, getState) => {
 
 export const signUp = (data) => async (dispatch, getState) => {
     const url = getState().getEndPoint;
+    dispatch({ type: START_LOADING })
     const body = data;
 
     try {
-        const res = await axios.post(`${url}/register/`, body)
+        const res = await axios.post(`${url}/register/`, body);
+        dispatch({ type: STOP_LOADING })
+
         if (res.data.status) {
             dispatch({
                 type: SIGN_UP_SUCCESS,
