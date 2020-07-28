@@ -9,7 +9,9 @@ import {
     GET_IMP_DATA_SUCCESS,
     GET_IMP_DATA_FAILED,
     ADD_BOOK_SUCCESS,
-    ADD_BOOK_FAILED
+    ADD_BOOK_FAILED,
+    SEARCH_FAILED,
+    SEARCH_SUCCESS
 } from './types';
 
 
@@ -158,4 +160,28 @@ export const addBook = state => async (dispatch, getState) => {
             payload: "Connection Problem."
         })
     }
+}
+
+
+export const searchBooks = data => async(dispatch, getState) => {
+    const url = getState().getEndPoint;
+
+    const body = JSON.stringify();
+
+    try{
+        const res = await axios.post(`${url}/search/`, { "search": data });
+        if(res.data.status){
+            dispatch({
+                type: SEARCH_SUCCESS,
+                payload: res.data
+            })
+        }
+    }
+    catch(e){
+        dispatch({
+            type: SEARCH_FAILED,
+            payload: "Connection Problem."
+        })
+    }
+
 }

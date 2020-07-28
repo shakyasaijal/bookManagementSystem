@@ -12,7 +12,10 @@ from rest_framework.decorators import permission_classes, api_view
 from books import models as books_model
 from . import serializers
 from helper import controller
-from api.common import send_email
+from api.common import send_email, tags
+from django.db.models import Q
+from helper import models as models_helper
+
 
 credentials = yaml.load(open("credentials.yaml"), Loader=yaml.FullLoader)
 
@@ -195,7 +198,12 @@ class Books(viewsets.ModelViewSet):
             # Add user to books model.
             new_book.user = books_model.User.objects.get(email=email)
             for data in author:
-                new_book.author.add(books_model.Author.objects.get(id=data['value']))
+                new_book.author.add(
+                    books_model.Author.objects.get(id=data['value']))
+
+            new_tags = tags.add_tags(request, author)
+            for data in new_tags:
+                new_book.tags.add(data)
 
             new_book.save()
             message = render_to_string('api/create-email.html', {
@@ -321,3 +329,40 @@ def data_to_add_book(request):
         return Response({"status": True, "data": data}, status=200)
     except Exception as e:
         return Response({"status": False, "data": {"message": "Something went wrong."}})
+
+
+class Search(mixins.CreateModelMixin,
+             viewsets.GenericViewSet):
+
+    serializer_class = serializers.SearchSerializer
+    permission_classes = [AllowAny, ]
+
+    def create(self, request):
+        books = books_model.Books.objects.filter(
+            Q(tags__tag__icontains=request.data['search'])).distinct()
+        data = []
+        chapters = []
+        subjects = []
+        grades = []
+        for book in books:
+            data.append({
+                "title": book.title,
+                "image": book.image.url,
+                "id": book.id
+            })
+            all_grade = dict(models_helper.grades_choice)
+            chapters.append(book.chapter)
+            if {"name": all_grade[book.grade], "id": book.grade} not in grades:
+                grades.append(
+                    {"name": all_grade[book.grade], "id": book.grade})
+
+            if {"name": book.subject.name, "id": book.subject.id} not in subjects:
+                subjects.append(
+                    {"name": book.subject.name, "id": book.subject.id})
+        response = {
+            "data": data,
+            "chapters": list(dict.fromkeys(chapters)),
+            "subjects": subjects,
+            'grades': grades
+        }
+        return Response({'status': True, 'data': response}, status=200)

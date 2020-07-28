@@ -13,6 +13,10 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return user
 
 
+class SearchSerializer(serializers.Serializer):
+    search = serializers.CharField()
+
+    
 class LoginSerializer(serializers.Serializer):
     """
     Serializer for login endpoint.

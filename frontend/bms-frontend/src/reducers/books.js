@@ -1,4 +1,4 @@
-import { POPULAR_BOOKS_FETCH_SUCCESS, ADD_BOOK_FAILED, ADD_BOOK_SUCCESS, GET_IMP_DATA_SUCCESS, BOOK_FETCH_BY_ID_SUCCESS, POPULAR_BOOKS_FETCH_FAILED, BOOKS_FETCH_SUCCESS, BOOKS_FETCH_FAILED, } from '../actions/types';
+import { POPULAR_BOOKS_FETCH_SUCCESS, SEARCH_SUCCESS, SEARCH_FAILED, ADD_BOOK_FAILED, ADD_BOOK_SUCCESS, GET_IMP_DATA_SUCCESS, BOOK_FETCH_BY_ID_SUCCESS, POPULAR_BOOKS_FETCH_FAILED, BOOKS_FETCH_SUCCESS, BOOKS_FETCH_FAILED, } from '../actions/types';
 
 
 
@@ -9,7 +9,11 @@ const initialState = {
     getBooks: '',
     bookById: '',
     subject: [],
-    author: []
+    author: [],
+    searchData: null,
+    allGrades: null,
+    allSubjects: null,
+    allChapters: null
 };
 
 export default function (state = initialState, action) {
@@ -46,7 +50,7 @@ export default function (state = initialState, action) {
                 notificationType: true
             }
         case GET_IMP_DATA_SUCCESS:
-            return{
+            return {
                 ...state,
                 subject: action.payload.data.allSubjects,
                 author: action.payload.data.allAuthor
@@ -58,10 +62,25 @@ export default function (state = initialState, action) {
                 notificationType: true
             }
         case ADD_BOOK_FAILED:
-            return{
+            return {
                 ...state,
                 notification: action.payload,
                 notificationType: false
+            }
+        case SEARCH_SUCCESS:
+            return {
+                ...state,
+                searchData: action.payload.data.data,
+                allSubjects: action.payload.data.subjects,
+                allGrades: action.payload.data.grades,
+                allChapters: action.payload.data.chapters
+            }
+        case SEARCH_FAILED:
+            return {
+                ...state,
+                searchData: null,
+                notificationType: false,
+                notification: action.payload
             }
         default:
             return state;

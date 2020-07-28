@@ -5,6 +5,12 @@
   .navs{
     display: none;
   }
+  .add{
+    width: 100%;
+  }
+  .col-md{
+    grid-template-columns: 100%;
+  }
   .app {
     margin-right: 25px;
     margin-left: 25px;

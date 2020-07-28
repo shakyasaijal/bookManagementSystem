@@ -134,6 +134,16 @@ def books_image_name_change(instance, filename):
     return os.path.join(upload_to, filename)
 
 
+class Tags(models.Model):
+    tag = models.CharField(max_length=200, null=False, blank=False)
+
+    def __str__(self):
+        return self.tag
+
+    class Meta:
+        verbose_name = verbose_name_plural = "Tags"
+
+
 class Books(models.Model):
     title = models.CharField(max_length=255, null=False, blank=False)
     grade = models.IntegerField(
@@ -150,6 +160,7 @@ class Books(models.Model):
     image = models.ImageField(
         upload_to=books_image_name_change, null=False, blank=False)
     description = models.TextField(null=False, blank=False, default='')
+    tags = models.ManyToManyField(Tags, related_name="book_tags", blank=True)
 
     def __str__(self):
         return self.title
@@ -202,3 +213,5 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
     if not old_file == new_file:
         if os.path.isfile(old_file.path):
             os.remove(old_file.path)
+
+
