@@ -1,13 +1,10 @@
 import React from 'react';
 import Cards from './Cards';
-import { popularBooks } from '../constants/constants';
 import { popularBooks as fetchBooks } from '../actions/books';
 import { connect } from 'react-redux';
 
 
 const PopularBooks = (props) => {
-
-    const data = popularBooks();
 
     React.useEffect(() => {
         props.fetchBooks();

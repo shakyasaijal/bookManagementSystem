@@ -1,4 +1,4 @@
-import { POPULAR_BOOKS_FETCH_SUCCESS, SEARCH_SUCCESS, SEARCH_FAILED, ADD_BOOK_FAILED, ADD_BOOK_SUCCESS, GET_IMP_DATA_SUCCESS, BOOK_FETCH_BY_ID_SUCCESS, POPULAR_BOOKS_FETCH_FAILED, BOOKS_FETCH_SUCCESS, BOOKS_FETCH_FAILED, } from '../actions/types';
+import { POPULAR_BOOKS_FETCH_SUCCESS, EDIT_BOOK_SUCCESS, EDIT_BOOK_FAILED, DELETE_FAILED, DELETE_SUCCESS, SEARCH_SUCCESS, SEARCH_FAILED, ADD_BOOK_FAILED, ADD_BOOK_SUCCESS, GET_IMP_DATA_SUCCESS, BOOK_FETCH_BY_ID_SUCCESS, POPULAR_BOOKS_FETCH_FAILED, BOOKS_FETCH_SUCCESS, BOOKS_FETCH_FAILED } from '../actions/types';
 
 
 
@@ -81,6 +81,30 @@ export default function (state = initialState, action) {
                 searchData: null,
                 notificationType: false,
                 notification: action.payload
+            }
+        case DELETE_FAILED:
+            return {
+                ...state,
+                notification: action.payload,
+                notificationType: false
+            }
+        case DELETE_SUCCESS:
+            return {
+                ...state,
+                notification: action.payload,
+                notificationType: true
+            }
+        case EDIT_BOOK_SUCCESS:
+            return {
+                ...state,
+                notification: "Book successfully updated.",
+                notificationType: true
+            }
+        case EDIT_BOOK_FAILED:
+            return {
+                ...state,
+                notification: action.payload,
+                notificationType: false
             }
         default:
             return state;

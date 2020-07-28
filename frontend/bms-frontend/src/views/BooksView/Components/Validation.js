@@ -1,6 +1,6 @@
 import { capitalize } from '../../../constants/constants';
 
-export const addValidation = data => {
+export const addValidation = (data, from) => {
     let error = [];
 
     for (const [key, value] of Object.entries(data)) {
@@ -10,9 +10,18 @@ export const addValidation = data => {
                 console.log(error)
             }
         }
-        if(key !== 'author' && key !== "subject"){
-            if(value.length < 1){
-                error.push({ "error": key, "errorValue": `${capitalize(key)} is required.` })
+        if(from === "add"){
+            if(key !== 'author' && key !== "subject"){
+                if(value.length < 1){
+                    error.push({ "error": key, "errorValue": `${capitalize(key)} is required.` })
+                }
+            }
+        }
+        else{
+            if(key !== 'author' && key !== "subject" && key !== "image"){
+                if(value.length < 1){
+                    error.push({ "error": key, "errorValue": `${capitalize(key)} is required.` })
+                }
             }
         }
     }

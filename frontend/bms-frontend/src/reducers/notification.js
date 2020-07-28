@@ -16,7 +16,6 @@ export default function (state = initialState, action) {
                 type: action.payload.notificationType
             }
         case CLEAR_NOTIFICATION:
-            console.log("clear?")
             return {
                 ...state,
                 notification: ''

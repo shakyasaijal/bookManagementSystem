@@ -11,7 +11,11 @@ import {
     ADD_BOOK_SUCCESS,
     ADD_BOOK_FAILED,
     SEARCH_FAILED,
-    SEARCH_SUCCESS
+    SEARCH_SUCCESS,
+    DELETE_FAILED,
+    DELETE_SUCCESS,
+    EDIT_BOOK_FAILED,
+    EDIT_BOOK_SUCCESS
 } from './types';
 
 
@@ -123,7 +127,6 @@ export const addBook = state => async (dispatch, getState) => {
 
     // Get token from state
     const access = getState().auth.accessToken;
-    const refresh = getState().auth.refreshToken;
     let data = new FormData()
     data.append("image", state.image)
     data.append("title", state.title)
@@ -145,7 +148,7 @@ export const addBook = state => async (dispatch, getState) => {
         if (res.data.status) {
             dispatch({
                 type: ADD_BOOK_SUCCESS,
-                payload: res
+                payload: res.data.data
             });
         }
         else {
@@ -186,6 +189,84 @@ export const searchBooks = (searchFor, grades, subjects, chapters) => async (dis
 
 }
 
-export const clearFilter = () => async(dispatch, getState) => {
-    dispatch({  })
+
+export const deleteBook = (id) => async (dispatch, getState) => {
+    const url = getState().getEndPoint;
+    const access = getState().auth.accessToken;
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${access}`
+        }
+    }
+
+    try {
+        const res = await axios.delete(`${url}/books/${id}`, config);
+        if (res.data.status) {
+            dispatch({
+                type: DELETE_SUCCESS,
+                payload: "Book successfully deleted."
+            })
+        }
+        else {
+            dispatch({
+                type: DELETE_FAILED,
+                payload: res.data.data.message
+            })
+        }
+    }
+    catch (e) {
+        console.log(e, "catch")
+        dispatch({
+            type: DELETE_FAILED,
+            payload: "Connection Problem."
+        })
+    }
+}
+
+
+export const editBook = state => async (dispatch, getState) => {
+    const url = getState().getEndPoint;
+    const access = getState().auth.accessToken;
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${access}`
+        },
+    }
+
+    let data = new FormData()
+    data.append("title", state.title)
+    data.append("grade", state.grade)
+    data.append("author", JSON.stringify(state.author))
+    data.append("description", state.description)
+    data.append("subject", JSON.stringify(state.subject))
+    data.append("chapter", state.chapter)
+        
+    if (state.image) {
+        data.append("image", state.image)
+    }
+
+    try {
+        const res = await axios.put(`${url}/books/${state.id}/`, data, config);
+        if (res.data.status) {
+            dispatch({
+                type: EDIT_BOOK_SUCCESS,
+                payload: res
+            });
+        }
+        else {
+            dispatch({
+                type: EDIT_BOOK_FAILED,
+                payload: res.data.data.message
+            });
+        }
+    } catch (e) {
+        dispatch({
+            type: EDIT_BOOK_FAILED,
+            payload: "Connection Problem."
+        })
+    }
+
 }

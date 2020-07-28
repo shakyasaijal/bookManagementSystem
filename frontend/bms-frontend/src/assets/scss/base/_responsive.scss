@@ -1,5 +1,5 @@
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
-  .mobile-nav{
+  .mobile-nav {
     display: flex;
   }
   .search {
@@ -15,15 +15,14 @@
         margin: 0 2%;
       }
     }
-    }
   }
-  .navs{
+  .navs {
     display: none;
   }
-  .add{
+  .add {
     width: 100%;
   }
-  .col-md{
+  .col-md {
     grid-template-columns: 100%;
   }
   .app {
@@ -37,7 +36,7 @@
       margin-top: 20px;
     }
   }
-  .footer{
+  .footer {
     position: relative;
     bottom: 9vh;
   }

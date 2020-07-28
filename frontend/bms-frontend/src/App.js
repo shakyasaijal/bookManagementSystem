@@ -14,7 +14,7 @@ import SignUp from './views/AuthView/SignUp';
 import Search from './views/SearchView/Search';
 import AddBook from './views/BooksView/Components/AddBook';
 import Footer from './components/Footer';
-import { clearNotification } from './actions/notification';
+import EditBook from './views/BooksView/Components/EditBook';
 
 const DEFAULT_TITLE = 'Book Management System';
 
@@ -44,7 +44,8 @@ function App() {
             <BookManagementRoute exact path={PATHS.SIGN_UP} component={SignUp} title="Sign Up" />
             <BookManagementRoute exact path={PATHS.SEARCH} component={Search} title="Search" />
             <BookManagementRoute exact path={PATHS.ADD_BOOK} component={AddBook} title="Add Book" />
-            <BookManagementRoute exact path={PATHS.NOT_FOUND} component={Home} title="Add Book" />
+            <BookManagementRoute exact path={PATHS.EDIT_BOOK} component={EditBook} title="Edit Book" />
+            <BookManagementRoute exact path={PATHS.NOT_FOUND} component={Home} />
           </Switch>
         </div>
         <Footer />

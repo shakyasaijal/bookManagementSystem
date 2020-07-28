@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { signUp } from './Components/Validation';
 import { signUp as signUpUser, clearNotificationStarter } from '../../actions/auth';
-import { loadNotification } from '../../actions/notification';
+import { loadNotification, clearNotification } from '../../actions/notification';
 import { Redirect } from 'react-router-dom';
 import PATHS from '../../routes';
 
@@ -61,7 +61,7 @@ const SignUp = props => {
     return (
         <div className="row">
             <div className="signIn center">
-                {props.flash && <div className={props.notificationType ? "success" : "invalid"}>{props.flash}</div>}
+                {props.flash && <div className={props.notificationType ? "success" : "invalid"}>{props.flash} <div className="close" onClick={props.clearNotification}>x</div></div>}
                 <div className="page-title">Sign Up</div>
                 <div className="signIn-container">
                     <form method="POST" onSubmit={e => handleSubmit(e)}>
@@ -104,4 +104,4 @@ const mapStateToProps = state => ({
     isAuthenticated: state.auth.isAuthenticated
 });
 
-export default connect(mapStateToProps, { signUpUser, loadNotification, clearNotificationStarter })(SignUp);
+export default connect(mapStateToProps, { signUpUser, loadNotification, clearNotificationStarter, clearNotification })(SignUp);

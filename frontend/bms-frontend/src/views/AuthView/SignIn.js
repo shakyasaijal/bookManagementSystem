@@ -56,7 +56,7 @@ const SignIn = props => {
     return (
         <div className="row">
             <div className="signIn center">
-                {props.flash && <div className={props.type ? "success" : "invalid"}>{props.flash}</div>}
+                {props.flash && <div className={props.type ? "success" : "invalid"}>{props.flash} <div className="close" onClick={props.clearNotification}>x</div></div>}
                 <div className="page-title">Sign In</div>
                 <div className="signIn-container">
                     <form method="POST" onSubmit={e => handleSubmit(e)}>

@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PopularBooks from '../../components/PopularBooks';
-import { getBooksById } from '../../actions/books';
+import { getBooksById, deleteBook } from '../../actions/books';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { getImageBasePath } from '../../config/config';
@@ -11,6 +12,11 @@ const BooksDetails = (props) => {
         props.getBooksById(props.match.params.id)
     }, [props.match.params.id]);
 
+    if (props.notification === "Book successfully deleted.") {
+        props.loadNotification(props.notification, props.notificationType);
+        return <Redirect to='/' />;
+    }
+
     let data = props.notificationType ? props.getBooks : '';
 
     if (!props.notificationType && props.notification === "Data not found") {
@@ -19,6 +25,14 @@ const BooksDetails = (props) => {
     }
 
     Object.keys(data).map((i, v) => data[i].author)
+    const currentUser = props.isAuthenticated ? parseInt(localStorage.getItem('user_id')) : ''
+
+
+    const handleDelete = () => {
+        if (window.confirm("Are you sure you want to delete the Book?")) {
+            props.deleteBook(props.match.params.id);
+        }
+    }
 
     return (
         <>
@@ -32,6 +46,13 @@ const BooksDetails = (props) => {
                             <div className="content">
                                 <div className="publisher">Published By: {data.data.postedBy}</div>
                             </div>
+                            {
+                                currentUser && data.data.userId === currentUser && <div className="options flex text-center">
+                                    <div className="edit"><div><Link to={`/edit-book/${props.match.params.id}`} className="edit-btn center">Edit</Link></div></div>
+                                    <div className="delete"><div className="delete-btn center" onClick={handleDelete}>Delete</div></div>
+                                </div>
+                            }
+
                         </div>
                         <div className="right">
                             <div className="book-name">{data.data.title} {data.data.author && <>by <span className="author">{data.data.author.join(', ')}</span></>} </div>
@@ -68,7 +89,10 @@ const BooksDetails = (props) => {
 const mapStateToProps = state => ({
     notificationType: state.books.notificationType,
     notification: state.books.notification,
-    getBooks: state.books.bookById
+    getBooks: state.books.bookById,
+    isAuthenticated: state.auth.isAuthenticated,
+    flash: state.notification.notification,
+    type: state.notification.type
 });
 
-export default connect(mapStateToProps, { getBooksById, loadNotification })(BooksDetails);
+export default connect(mapStateToProps, { getBooksById, loadNotification, deleteBook })(BooksDetails);

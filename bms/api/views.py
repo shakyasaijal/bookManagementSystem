@@ -125,17 +125,41 @@ class Books(viewsets.ModelViewSet):
             book = books_model.Books.objects.get(pk=pk)
             book.views += 1
             book.save()
+
+            all_subject = books_model.Subject.objects.all()
+            all_author = books_model.Author.objects.all()
+            subject = []
+            author = []
+            for data in all_subject:
+                subject.append({
+                    "value": data.id,
+                    "label": data.name
+                })
+
+            for data in all_author:
+                author.append({
+                    "value": data.id,
+                    "label": data.fullName
+                })
+            all_grade = dict(models_helper.grades_choice)
+
             data = {
                 "id": book.id,
                 "title": book.title,
                 "grade": book.grade,
+                "gradeObj": {"value": book.grade, "label": all_grade[book.grade]},
                 "author": [i.fullName for i in book.author.all()],
+                "authorObj": [{"value": i.id, "label": i.fullName} for i in book.author.all()],
                 "subject": book.subject.name,
+                "subjectObj": {"value": book.subject.id, "label": book.subject.name},
                 "chapter": book.chapter,
                 "postedBy": book.user.get_full_name(),
+                'userId': book.user.id,
                 "image": book.image.url,
                 "views": book.views,
-                "description": book.description
+                "description": book.description,
+                "subjects": subject,
+                "authors": author
             }
             return Response({"status": True, "data": data}, status=200)
         except (Exception, books_model.Books.DoesNotExist) as e:
@@ -152,29 +176,50 @@ class Books(viewsets.ModelViewSet):
             return Response({"status": False, "data": {"message": "Access Token required"}}, status=401)
 
         try:
+            author = None
+            try:
+                author = eval(request.data['author'])
+            except Exception as e:
+                pass
+
+            subject = eval(request.data['subject'])
+
+            image = None
+            try:
+                if request.FILES['image']:
+                    print("files got", request.FILES['image'])
+                    update_book = books_model.Books.objects.filter(pk=pk).update(title=request.data['title'], subject=books_model.Subject.objects.get(id=subject['value']), grade=request.data['grade'], chapter=request.data['chapter'],
+                                                                                 description=request.data['description'])
+                    update_image = books_model.Books.objects.get(pk=pk)
+                    update_image.image = request.FILES['image']
+                    update_image.save()
+            except Exception as e:
+                update_book = books_model.Books.objects.filter(pk=pk).update(title=request.data['title'], subject=books_model.Subject.objects.get(id=subject['value']), grade=request.data['grade'], chapter=request.data['chapter'],
+                                                                             description=request.data['description'])
+
             book = books_model.Books.objects.get(pk=pk)
-            serializer = serializers.BooksSerializer(book, data=request.data)
+            if email != book.user.email:
+                return Response({"status": False, "data": {"message": "You don't have authority to update this book."}}, status=401)
 
-            if serializer.is_valid():
-                if email != book.user.email:
-                    return Response({"status": False, "data": {"message": "You don't have authority to update this book."}}, status=401)
-                message = render_to_string('api/update-email.html', {
-                    'byUser': book.user.get_full_name(),
-                    'title': book.title
-                })
+            book.author.clear()
+            if author:
+                for data in author:
+                    book.author.add(
+                        books_model.Author.objects.get(id=data['value']))
 
-                # Get author email
-                author_email = [data.email for data in book.author.all()]
+            message = render_to_string('api/update-email.html', {
+                'byUser': book.user.get_full_name(),
+                'title': request.data['title']
+            })
 
-                # Send email
-                if send_email.send_new_email(author_email, message, "Book has been updated."):
-                    serializer.save()
-                    return Response({"status": True, "data": serializer.data}, status=200)
-                else:
-                    return Response({"status": False, "data": {"message": "Sorry. Email could not be send."}}, status=401)
+            # Get author email
+            author_email = [data.email for data in book.author.all()]
+
+            # Send email
+            if send_email.send_new_email(author_email, message, "Book has been updated."):
+                return Response({"status": True, "data": 'Updated'}, status=200)
             else:
-                print(serializer.errors)
-                return Response({"status": False, "data": {"message": "Unable to update data."}})
+                return Response({"status": False, "data": {"message": "Sorry. Email could not be send."}}, status=401)
         except (Exception, books_model.Books.DoesNotExist) as e:
             print(e)
             return Response({"status": False, "data": {"message": "Data not found."}}, status=401)
@@ -197,14 +242,19 @@ class Books(viewsets.ModelViewSet):
 
             # Add user to books model.
             new_book.user = books_model.User.objects.get(email=email)
+            new_book.save()
             for data in author:
                 new_book.author.add(
                     books_model.Author.objects.get(id=data['value']))
 
+            # Add tags to the book object for search.
             new_tags = tags.add_tags(request, author)
-            for data in new_tags:
-                new_book.tags.add(data)
-
+            try:
+                for data in new_tags:
+                    new_book.tags.add(data)
+            except Exception as e:
+                pass
+            
             new_book.save()
             message = render_to_string('api/create-email.html', {
                 'byUser': new_book.user.get_full_name(),
@@ -341,6 +391,10 @@ class Search(mixins.CreateModelMixin,
         subjectFilter = []
         chapterFilter = []
         gradeFilter = []
+
+        # If subject selected, then filter from it
+        # otherwise
+        # get all subjects
         try:
             subjectFilter = request.data['filters']['subjects']
             if not subjectFilter:
@@ -348,6 +402,9 @@ class Search(mixins.CreateModelMixin,
         except Exception as e:
             subjectFilter = search_controller.get_unique_subjects()
 
+        # If chapter selected, then filter from it
+        # otherwise
+        # get all chapter
         try:
             chapterFilter = request.data['filters']['chapters']
             if not chapterFilter:
@@ -355,6 +412,9 @@ class Search(mixins.CreateModelMixin,
         except Exception as e:
             chapterFilter = search_controller.get_unique_chapters()
 
+        # If grade selected, then filter from it
+        # otherwise
+        # get all grade
         try:
             gradeFilter = request.data['filters']['grades']
             if not gradeFilter:
@@ -365,26 +425,35 @@ class Search(mixins.CreateModelMixin,
         books = books_model.Books.objects.filter(
             Q(tags__tag__icontains=request.data['search']) & Q(subject__id__in=subjectFilter) & Q(chapter__in=chapterFilter) & Q(grade__in=gradeFilter)).distinct()
 
-
+        '''
+        > data: search result
+        > chapters, subjects, grades for filter
+        '''
         data = []
         chapters = []
         subjects = []
         grades = []
+
         for book in books:
             data.append({
                 "title": book.title,
                 "image": book.image.url,
                 "id": book.id
             })
+
             all_grade = dict(models_helper.grades_choice)
             chapters.append(book.chapter)
+
+            # Check for uniqueness
             if {"name": all_grade[book.grade], "id": book.grade} not in grades:
                 grades.append(
                     {"name": all_grade[book.grade], "id": book.grade})
 
+            # Check for uniqueness
             if {"name": book.subject.name, "id": book.subject.id} not in subjects:
                 subjects.append(
                     {"name": book.subject.name, "id": book.subject.id})
+
         response = {
             "data": data,
             "chapters": list(dict.fromkeys(chapters)),
@@ -392,14 +461,3 @@ class Search(mixins.CreateModelMixin,
             'grades': grades
         }
         return Response({'status': True, 'data': response}, status=200)
-
-
-
-class Filter(mixins.CreateModelMixin,
-             viewsets.GenericViewSet):
-    serializer_class = serializers.FilterSerializer
-    permission_classes = [AllowAny]
-
-    def create(self, request):
-        if 'grade' in request.data:
-            books = books_model.Books.objects.filter()

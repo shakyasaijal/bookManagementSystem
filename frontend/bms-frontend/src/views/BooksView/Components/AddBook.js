@@ -6,12 +6,15 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { Redirect } from 'react-router-dom';
 import { getImpData, addBook } from '../../../actions/books';
-import { loadNotification } from '../../../actions/notification';
+import { loadNotification, clearNotification } from '../../../actions/notification';
 
 const animatedComponents = makeAnimated();
 
 
 const AddBook = props => {
+    React.useEffect(() => {
+        props.getImpData();
+    }, []);
     const initialState = {
         title: '',
         grade: '',
@@ -34,14 +37,15 @@ const AddBook = props => {
 
     let subject = [];
     let authors = [];
-
-
-    React.useEffect(() => {
-        props.getImpData();
-    }, []);
     React.useEffect(() => {
         props.loadNotification(props.notification, props.notificationType);
-    }, [props.notification])
+    }, [props.notification]);
+
+    React.useEffect(()=>{
+        if(props.flash){
+            setState(initialState);
+        }
+    }, [props.flash])
 
     const subjectDropDown = props.subject.map(k => (
         subject.push(k)
@@ -57,9 +61,9 @@ const AddBook = props => {
     }
 
     const handleSubmit = e => {
-        setError({});
         e.preventDefault();
-        let validation = addValidation(state);
+        setError({});
+        let validation = addValidation(state, "add");
         if (validation.length > 0) {
             let val = {};
             for (let i = 0; i < validation.length; i++) {
@@ -69,7 +73,6 @@ const AddBook = props => {
         }
         else {
             props.addBook(state);
-            setState(initialState);
         }
     }
 
@@ -111,10 +114,10 @@ const AddBook = props => {
     return (
         <div className="row">
             <div className="center">
-                {props.flash && <div className={props.type ? "success" : "invalid"}>{props.flash}</div>}
+                {props.flash && <div className={props.type ? "success" : "invalid"}>{props.flash} <div className="close" onClick={props.clearNotification}>x</div></div>}
                 <div className="page-title">Add Book</div>
                 <div className="add center signIn-container">
-                    <form method="POST" onSubmit={e => handleSubmit(e)} enctype="multipart/form-data">
+                    <form method="POST" onSubmit={e => handleSubmit(e)} encType="multipart/form-data">
                         <div className="col-md">
                             <div className="form-group">
                                 <div className="label">Title</div>
@@ -198,4 +201,4 @@ const mapStateToProps = state => ({
     type: state.notification.type
 });
 
-export default connect(mapStateToProps, { getImpData, addBook, loadNotification })(AddBook);
+export default connect(mapStateToProps, { getImpData, addBook, loadNotification, clearNotification })(AddBook);

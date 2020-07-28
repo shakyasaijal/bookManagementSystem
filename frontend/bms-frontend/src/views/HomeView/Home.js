@@ -7,8 +7,6 @@ import { connect } from 'react-redux';
 
 
 const Home = props => {
-    console.log(props.notification)
-
     React.useEffect(() => {
         if (props.notification) {
             if (props.notification != "Data not found") {
@@ -20,7 +18,7 @@ const Home = props => {
 
     return (
         <>
-            {props.flash && <div className={props.type ? "success" : "invalid"}>{props.flash}</div>}
+            {props.flash && <div className={props.type ? "success" : "invalid"}>{props.flash}<div className="close" onClick={props.clearNotification}>x</div></div>}
             <PopularBooks />
             <LatestBooks />
         </>
