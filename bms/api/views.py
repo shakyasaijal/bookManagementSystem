@@ -16,6 +16,7 @@ from api.common import send_email, tags
 from django.db.models import Q
 from helper import models as models_helper
 from api.common import controller as search_controller
+from api import middleware
 
 credentials = yaml.load(open("credentials.yaml"), Loader=yaml.FullLoader)
 
@@ -185,17 +186,26 @@ class Books(viewsets.ModelViewSet):
             subject = eval(request.data['subject'])
 
             image = None
+            update__ = books_model.Books.objects.none()
             try:
                 if request.FILES['image']:
-                    print("files got", request.FILES['image'])
                     update_book = books_model.Books.objects.filter(pk=pk).update(title=request.data['title'], subject=books_model.Subject.objects.get(id=subject['value']), grade=request.data['grade'], chapter=request.data['chapter'],
                                                                                  description=request.data['description'])
-                    update_image = books_model.Books.objects.get(pk=pk)
-                    update_image.image = request.FILES['image']
-                    update_image.save()
+                    update__ = books_model.Books.objects.get(pk=pk)
+                    update__.image = request.FILES['image']
+                    update__.save()
             except Exception as e:
                 update_book = books_model.Books.objects.filter(pk=pk).update(title=request.data['title'], subject=books_model.Subject.objects.get(id=subject['value']), grade=request.data['grade'], chapter=request.data['chapter'],
                                                                              description=request.data['description'])
+
+            new_tags = tags.add_tags(request, author)
+            try:
+                update__ = books_model.Books.objects.get(pk=pk)
+                update__.tags.clear()
+                for data in new_tags:
+                    update__.tags.add(data)
+            except Exception as e:
+                pass
 
             book = books_model.Books.objects.get(pk=pk)
             if email != book.user.email:
@@ -254,7 +264,7 @@ class Books(viewsets.ModelViewSet):
                     new_book.tags.add(data)
             except Exception as e:
                 pass
-            
+
             new_book.save()
             message = render_to_string('api/create-email.html', {
                 'byUser': new_book.user.get_full_name(),
@@ -313,6 +323,7 @@ class Logout(mixins.CreateModelMixin,
             serializer = serializers.Logout(data=request.data)
             if serializer.is_valid():
                 refresh_tokens = user.refresh_tokens.split(",")
+                
                 if serializer.data.get("refreshToken") in refresh_tokens:
                     refresh_tokens.remove(serializer.data.get("refreshToken"))
                     if len(refresh_tokens) > 0:
@@ -379,6 +390,25 @@ def data_to_add_book(request):
         return Response({"status": True, "data": data}, status=200)
     except Exception as e:
         return Response({"status": False, "data": {"message": "Something went wrong."}})
+
+
+
+@csrf_exempt
+@api_view(["POST"])
+@permission_classes((AllowAny,))
+def refresh_access_token(request):
+    try:
+        refreshToken = request.data['refreshToken']
+    except Exception as e:
+        return Response({"status": False, "data": {"message": "Refresh token required."}}, status=201)
+
+    try:
+        refresh = middleware.refresh_access_token(refreshToken)
+        print(refresh)
+        return Response({"status": True, "data": refresh}, status=200)
+    except Exception as e:
+        return Response({"status": False, "data": {"message": "Something went wrong."}})
+        
 
 
 class Search(mixins.CreateModelMixin,

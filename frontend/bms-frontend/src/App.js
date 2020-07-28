@@ -5,6 +5,8 @@ import PATHS from './routes';
 import { Provider } from 'react-redux';
 import store from './store';
 import { loadUser } from './actions/auth';
+import { checkTokenExpired } from './services/middleware';
+
 
 import Header from './components/Header';
 import Home from './views/HomeView/Home';
@@ -30,6 +32,7 @@ const BookManagementRoute = (props) => {
 
 function App() {
   useEffect(() => {
+    store.dispatch(checkTokenExpired());
     store.dispatch(loadUser());
   }, []);
 

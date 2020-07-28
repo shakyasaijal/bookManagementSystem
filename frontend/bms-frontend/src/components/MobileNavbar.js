@@ -13,7 +13,7 @@ const MobileNavbar = props => {
             {
                 props.isAuthenticated ? <>
                     <div className="option">
-                        <span onClick={() => dispatch(logout())}>Logout</span>
+                        <span onClick={() => dispatch(logout())} className="logout-btn">Logout</span>
                     </div>
                     <div className="option">
                         <Link to={PATHS.ADD_BOOK}>Add book</Link>

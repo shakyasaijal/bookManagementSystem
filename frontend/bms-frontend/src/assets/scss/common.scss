@@ -158,6 +158,12 @@
   }
 }
 
+.logout-btn{
+  cursor: pointer;
+  color: $theme-color;
+  font-weight: 500;
+}
+
 .book-details {
   & .container {
     display: grid;

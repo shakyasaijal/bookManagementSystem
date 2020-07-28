@@ -88,6 +88,7 @@ export const logout = () => async (dispatch, getState) => {
     const access = getState().auth.accessToken;
     const refresh = getState().auth.refreshToken;
 
+
     // Request Body
     const body = JSON.stringify({ 'refreshToken': refresh, 'accessToken': access })
 
