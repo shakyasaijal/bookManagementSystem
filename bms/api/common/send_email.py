@@ -3,10 +3,12 @@ from django.core.mail import send_mail
 from django.core.mail import send_mail, BadHeaderError, EmailMessage
 import socket
 import smtplib
+from celery import shared_task
+
 
 credentials = yaml.load(open('credentials.yaml'), Loader=yaml.FullLoader)
 
-
+@shared_task
 def send_new_email(email, message, subject=""):
     try:
         sender = credentials['sys_email']

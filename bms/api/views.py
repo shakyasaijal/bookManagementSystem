@@ -226,7 +226,7 @@ class Books(viewsets.ModelViewSet):
             author_email = [data.email for data in book.author.all()]
 
             # Send email
-            if send_email.send_new_email(author_email, message, "Book has been updated."):
+            if send_email.send_new_email.delay(author_email, message, "Book has been updated."):
                 return Response({"status": True, "data": 'Updated'}, status=200)
             else:
                 return Response({"status": False, "data": {"message": "Sorry. Email could not be send."}}, status=401)
@@ -274,7 +274,7 @@ class Books(viewsets.ModelViewSet):
             # Get author email
             author_email = [data.email for data in new_book.author.all()]
 
-            if send_email.send_new_email(author_email, message, "Book has been created."):
+            if send_email.send_new_email.delay(author_email, message, "Book has been created."):
                 return Response({"status": True, "data": "Book successfully created."}, status=200)
             else:
                 new_book.delete()

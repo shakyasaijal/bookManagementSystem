@@ -14,33 +14,8 @@ import {
 } from './types';
 
 export const loadUser = () => async (dispatch, getState) => {
-    const url = getState().getEndPoint;
-
     //User Loading
     dispatch({ type: USER_LOADING });
-
-    // Get token from state
-    const access = getState().auth.accessToken;
-
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${access}`
-        }
-    }
-    //   try {
-    //     const res = await axios.get(`${url}api/v1/users/profile/`, config)
-    //     dispatch({
-    //       type: USER_LOADED,
-    //       payload: res.data
-    //     });
-    //   }
-    //   catch (e) {
-    //     console.log(e + " Load error")
-    //     // dispatch(returnErrors(err.response.data, err.response.status));
-    //     dispatch({ type: AUTH_ERROR });
-    //   }
-
 }
 
 
@@ -124,11 +99,14 @@ export const logout = () => async (dispatch, getState) => {
 
 export const signUp = (data) => async (dispatch, getState) => {
     const url = getState().getEndPoint;
+
+    // Start loading for loading styles in frontend.
     dispatch({ type: START_LOADING })
     const body = data;
 
     try {
         const res = await axios.post(`${url}/register/`, body);
+        // Stop loading for loading styles in frontend after data is fetched.
         dispatch({ type: STOP_LOADING })
 
         if (res.data.status) {

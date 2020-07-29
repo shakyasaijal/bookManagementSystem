@@ -173,6 +173,8 @@ export const addBook = state => async (dispatch, getState) => {
             });
         }
     } catch (e) {
+        dispatch({ type: STOP_LOADING })
+
         dispatch({
             type: ADD_BOOK_FAILED,
             payload: "Connection Problem."
