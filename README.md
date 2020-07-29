@@ -17,6 +17,20 @@
 > Email: `admin@admin.com` <br/>
 > Password: `admin`
 
+## Architecture
+
+This project is based on jwt token authentication. We have two tokens: access token and refresh token
+
+### Access Token
+
+`Access Token expires in 1 hour which is stored in cookie. `
+
+### Refresh Token
+
+`Refresh Token expires in 30 days which is stored in cookie.`
+
+If access token and refresh token, both are expired, then user is logout of the application. If access token is expired but refresh token is not, then by using refresh token, we will refresh our access token which will make users authenticate for next 1 hour. 
+
 ## Project Setup
 
 ```

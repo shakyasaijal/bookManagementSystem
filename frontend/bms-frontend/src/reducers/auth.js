@@ -1,12 +1,16 @@
 import { USER_LOADING, REFRESH_TOKEN_SUCCESS, REFRESH_TOKEN_FAILED, CLEAR_NOTIFICATION_STARTER, SIGN_UP_SUCCESS, SIGN_UP_FAILED, USER_LOADED, LOGIN_SUCCESS, LOGIN_FAIL, AUTH_ERROR, LOGOUT_SUCCESS, LOGOUT_FAIL } from '../actions/types';
 import { setCookie, getCookie } from '../services/cookie';
 
-const cookie = getCookie();
+// Due to time constraint, I have used cookie to store
+// access token and refresh token
+// For production level, we may use redux persist to store important data like
+// access token and refresh token
 
+const cookie = getCookie();
 const initialState = {
     refreshToken: cookie ? cookie.refresh_token : '',
     accessToken: cookie ? cookie.access_token : '',
-    isAuthenticated: null,
+    isAuthenticated: cookie.refresh_token || cookie.access_token ? true : null,
     isLoading: false,
     user_id: localStorage.getItem('user_id'),
     notification: '',
@@ -22,11 +26,18 @@ export default function (state = initialState, action) {
                     isLoading: true,
                     isAuthenticated: true,
                 };
-            } else {
+            } else if(state.refreshToken) {
                 return {
                     ...state,
+                    isAuthenticated: true,
                     isLoading: true,
                 };
+            }
+            else{
+                return{
+                    ...state,
+                    isAuthenticated: false
+                }
             }
         case USER_LOADED:
             return {
@@ -125,14 +136,14 @@ export default function (state = initialState, action) {
             setCookie([
                 {
                     "name": "access_token",
-                    "value": action.payload.data.accessToken,
+                    "value": action.payload,
                     "expiry": 1
                 }
             ]);
             return {
                 ...state,
                 isAuthenticated: true,
-                accessToken: action.payload.data.accessToken
+                accessToken: action.payload
             }
         default:
             return state;

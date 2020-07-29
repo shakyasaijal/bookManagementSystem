@@ -1,18 +1,17 @@
 import JwtDecode from 'jwt-decode';
 import axios from 'axios';
 
-import { REFRESH_TOKEN_SUCCESS, REFRESH_TOKEN_FAILED } from '../actions/types';
+import { REFRESH_TOKEN_SUCCESS, REFRESH_TOKEN_FAILED, LOGOUT_SUCCESS } from '../actions/types';
 
 export const checkTokenExpired = () => async (dispatch, getState) => {
-    const isAuth = getState().auth.isAuthenticated;
-    console.log(getState().auth)
-    if (!isAuth) return '';
-
     const access = getState().auth.accessToken;
     const refresh = getState().auth.refreshToken;
     const url = getState().getEndPoint
 
-    if (!access) return ';'
+    if (!refresh) {
+        dispatch({ type: LOGOUT_SUCCESS })
+        return ''
+    }
 
     // JwtDecode() returns
     /*
@@ -20,18 +19,23 @@ export const checkTokenExpired = () => async (dispatch, getState) => {
       expires: "2020-06-23 23:17:09.794487"
       scope: "access"
     */
-    // We need expires here.
 
-    const decoded = JwtDecode(access);
-    const expired = new Date(decoded.expires);
+    let flag = false;
+    if (access) {
+        const decoded = JwtDecode(access);
+        const expired = new Date(decoded.expires);
 
-    // until expired time in minutes
-    const untilExpired = (expired - Date.now()) / 1000 / 60;
+        // until expired time in minutes
+        const untilExpired = (expired - Date.now()) / 1000 / 60;
+        if(untilExpired < 1){
+            flag= true;
+        }
+    }
 
-    if (untilExpired < 1) {
+
+    if (flag || !access) {
         try {
             const res = await axios.post(`${url}/refresh-at`, { "refreshToken": refresh });
-            console.log(res, "is refreshed  ")
             if (res.data.status) {
                 dispatch({
                     type: REFRESH_TOKEN_SUCCESS,
@@ -50,4 +54,5 @@ export const checkTokenExpired = () => async (dispatch, getState) => {
             })
         }
     }
+    return ''
 }

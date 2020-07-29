@@ -17,7 +17,7 @@ const Header = (props) => {
                     <Link to={PATHS.HOME} className="nav">Home</Link>
                     <Link to={PATHS.SEARCH} className="nav">Search</Link>
                     {
-                        isAuth.isAuthenticated ? <><Link to={PATHS.ADD_BOOK} className="nav">Add Book</Link><span onClick={() => { dispatch(logout()); }} className="nav logout-btn">Logout</span></> : <>
+                        isAuth.isAuthenticated ? <><Link to={PATHS.ADD_BOOK} className="nav">Add Book</Link><span onClick={() => { dispatch(logout());console.log("apple") }} className="nav logout-btn">Logout</span></> : <>
                             <Link to={PATHS.SIGN_IN} className="nav">Sign In</Link>
                             <Link to={PATHS.SIGN_UP} className="nav">Sign Up</Link>
                         </>
@@ -30,7 +30,6 @@ const Header = (props) => {
 
 const mapStateToProps = state => ({
     isAuthenticated: state.auth.isAuthenticated,
-    error: state.auth.errorLOAD_ERROR
 });
 
 export default connect(mapStateToProps, {clearNotification})(Header);
