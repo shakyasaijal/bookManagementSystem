@@ -6,6 +6,7 @@
 - [Backend Setup](#backend-setup)
 - [Frontend Setup](#frontend-setup)
 - [Features Completed](#features-completed)
+- [Design](https://www.figma.com/file/Klm9ONASTghC7H6UsPnacB/Untitled?node-id=0%3A1)
 
 ## Demo
 
