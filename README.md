@@ -3,7 +3,7 @@
 ## Table of Contents
 
 - [Project Setup](#project-setup)
-- [Pre-requisites](#prerequisites)
+- [Pre-requisites](#pre-requisites)
 - [Backend Setup](#backend-setup)
 - [Frontend Setup](#frontend-setup)
 - [Features Completed](#features-completed)
