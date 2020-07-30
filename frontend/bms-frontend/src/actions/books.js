@@ -104,7 +104,14 @@ export const getBooksById = id => async (dispatch, getState) => {
                 payload: res.data
             });
         }
+        else{
+            dispatch({
+                type: BOOKS_FETCH_FAILED,
+                payload: "Data not found."
+            })
+        }
     } catch (e) {
+        dispatch({ type: STOP_LOADING })
         if (e.response.status) {
             dispatch({ type: BOOKS_FETCH_FAILED, payload: e.response.data.data.message })
         }

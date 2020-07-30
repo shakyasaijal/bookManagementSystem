@@ -57,6 +57,7 @@ export default function (state = initialState, action) {
                     "expiry": 30
                 }
             ]);
+            localStorage.setItem('user_id', action.payload.data.id);
             return {
                 ...state,
                 ...action.payload,
@@ -68,6 +69,8 @@ export default function (state = initialState, action) {
                 notificationType: true
             };
         case LOGIN_FAIL:
+            localStorage.setItem('user_id', '');
+
             setCookie([
                 {
                     "name": "access_token",
@@ -88,6 +91,8 @@ export default function (state = initialState, action) {
         case AUTH_ERROR:
         case LOGOUT_SUCCESS:
         case REFRESH_TOKEN_FAILED:
+            localStorage.setItem('user_id', '');
+
             setCookie([
                 {
                     "name": "access_token",

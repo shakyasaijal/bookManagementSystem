@@ -13,6 +13,7 @@ import PATHS from '../../../routes';
 const animatedComponents = makeAnimated();
 
 const EditBook = props => {
+
     // Get Books Details 
     React.useEffect(() => {
         props.getBooksById(props.match.params.id);
@@ -25,6 +26,8 @@ const EditBook = props => {
             window.location.reload()
         }
     }, [props.notification])
+
+
 
     const initialState = {
         title: '',
@@ -48,7 +51,6 @@ const EditBook = props => {
     });
     const [dbData, setData] = useState({ grades: null, subjects: null, authors: null, image: null, loaded: false, id: null });
 
-
     React.useEffect(() => {
         let data = props.getBooks
         if (Object.keys(data).length > 0) {
@@ -67,7 +69,8 @@ const EditBook = props => {
                 subjects: data.data.subjects,
                 authors: data.data.authors,
                 image: getImageBasePath(data.data.image),
-                id: data.data.userId
+                id: data.data.userId,
+                loaded: true
             })
             if (dbData.id) {
                 setData({
@@ -78,16 +81,17 @@ const EditBook = props => {
         }
     }, [props.getBooks]);
 
+
     if (!props.isAuthenticated) {
         return <Redirect to={PATHS.SIGN_IN} />;
     }
+
 
     if (dbData.loaded) {
         if (parseInt(localStorage.getItem('user_id')) !== dbData.id) {
             return <Redirect to='/' />;
         }
     }
-
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -145,7 +149,7 @@ const EditBook = props => {
     return (
         <div className="row">
             <div className="center">
-                
+
                 {props.flash && <div className={props.type ? "success" : "invalid"}>{props.flash} <div className="close" onClick={props.clearNotification}>x</div></div>}
                 <div className="page-title">Edit Book</div>
                 {
