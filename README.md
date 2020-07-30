@@ -3,6 +3,7 @@
 ## Table of Contents
 
 - [Project Setup](#project-setup)
+- [Pre-requisites](#prerequisites)
 - [Backend Setup](#backend-setup)
 - [Frontend Setup](#frontend-setup)
 - [Features Completed](#features-completed)
@@ -73,4 +74,3 @@ Note: `bash bash.sh is to be runned before running the following steps.`
 - Force logout user after refresh token expires
 - Search
 - Secretly logging in user when access token expired.
-
