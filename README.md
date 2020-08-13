@@ -4,14 +4,14 @@
 
 - [Project Setup](#project-setup)
 - [Pre-requisites](#pre-requisites)
-- [Backend Setup](#backend-setup)
-- [Frontend Setup](#frontend-setup)
+- [Backend Setup](https://github.com/shakyasaijal/bookManagementSystem/wiki/Backend-Setup)
+- [Frontend Setup](https://github.com/shakyasaijal/bookManagementSystem/wiki/Frontend-Setup)
 - [Features Completed](#features-completed)
 - [Design](https://www.figma.com/file/Klm9ONASTghC7H6UsPnacB/Untitled?node-id=0%3A1)
 
 ## Demo
 
-- [Backend](http://admin.onehousesolution.com/admin)
+- [Backend](http://admin.onehousesolution.com)
 - [Frontend](http://dev.onehousesolution.com)
 
 ### Admin Credentials
@@ -46,13 +46,6 @@ $ bash bash.sh
 
 Note: `bash bash.sh is to be runned before running the following steps.`
 
-### Backend Setup
-
-- [Click Here](https://github.com/shakyasaijal/bookManagementSystem/wiki/Backend-Setup)
-
-### Frontend Setup
-
-- [Click Here](https://github.com/shakyasaijal/bookManagementSystem/wiki/Frontend-Setup)
 
 ### Features Completed
 
