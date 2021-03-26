@@ -7,7 +7,7 @@ Pillow==7.1.2
 pycodestyle==2.6.0
 PyJWT==1.7.1
 pytz==2020.1
-PyYAML==5.3.1
+PyYAML==5.4
 sqlparse==0.3.1
 toml==0.10.1
 celery==4.4.6
