@@ -9,16 +9,6 @@
 - [Features Completed](#features-completed)
 - [Design](https://www.figma.com/file/Klm9ONASTghC7H6UsPnacB/Untitled?node-id=0%3A1)
 
-## Demo
-
-- [Backend](http://admin.onehousesolution.com)
-- [Frontend](http://dev.onehousesolution.com)
-
-### Admin Credentials
-
-> Email: `admin@admin.com` <br/>
-> Password: `admin`
-
 ## Pre-requisites
 
 - [Yarn >=v1](https://classic.yarnpkg.com/en/docs/install) [we are using yarn as primary package manager.]
